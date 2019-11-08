@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.config.js && cp ./public/* ./dist",
-    "start": "python3 -m http.server 3000 --directory ./dist"
+    "start": "python3 -m http.server 3000 --directory ./dist",
+    "win_build": "webpack --config webpack.config.js && xcopy /s /Y .\\public .\\dist",
+    "win_start": "python -m http.server 3000 --directory ./dist"
   },
   "keywords": [],
   "author": "",
