@@ -1,0 +1,24 @@
+{
+  "name": "software-map-visualizer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js && cp ./public/* ./dist",
+    "start": "python3 -m http.server 3000 --directory ./dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^5.12.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^5.7.2",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  }
+}
