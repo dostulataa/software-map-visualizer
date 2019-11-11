@@ -4,21 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js && cp ./public/* ./dist",
-    "start": "python3 -m http.server 3000 --directory ./dist"
+    "build": "webpack --display-error-details --config webpack.config.js",
+    "start": "webpack-dev-server",
+    "clean": "rm -rf ./dist"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "d3": "^5.12.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@types/d3": "^5.7.2",
-    "rollup-plugin-node-resolve": "^5.2.0",
+    "@types/d3-selection": "^1.4.1",
+    "@types/webpack-env": "^1.14.1",
+    "d3-selection": "^1.4.0",
+    "html-webpack-plugin": "^3.2.0",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.2",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
   }
 }
