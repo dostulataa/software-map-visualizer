@@ -14,7 +14,7 @@ const project: Project = Project.create(data);
 
 const canvas = new Rect([0, 0], [svg_width, svg_height]);
 
-const boxes: Box[] = sliceAndDice(project.nodes[0], canvas.p, canvas.q, 0);
+const boxes: Box[] = sliceAndDice(project.nodes[0], canvas, 0);
 
 const svg = select("body")
     .append("svg")
