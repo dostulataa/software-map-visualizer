@@ -11,8 +11,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Software Map Visualization',
-
+      title: 'Software Map Visualization'
     })
   ],
   module: {
