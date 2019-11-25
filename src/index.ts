@@ -1,20 +1,29 @@
 import Box from "./models/Box";
 import { select, event } from "d3-selection";
 import { default as data } from "./sample.cc";
-import { sliceAndDice } from "./sliceAndDIce";
 import Rect from "./models/Rect";
+import Validation from "./Validation";
+import { default as schema } from "./schema";
+import { default as sliceAndDice } from "./sliceAndDice";
 import Project from "./models/Project";
+
+const errors = Validation.checkData(data, schema);
+if(errors.length !== 0) {
+    let message: string = "";
+    for(let error of errors.keys) {
+        message.concat(errors[error] + "\n");
+    }
+    throw new Error(message);
+}
 
 const svg_width: number = 500;
 const svg_height: number = 500;
-
+let canvas: Rect = new Rect([0, 0], [svg_width, svg_height]);
 const margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
 const project: Project = Project.create(data);
-
-const canvas = new Rect([0, 0], [svg_width, svg_height]);
-
-const boxes: Box[] = sliceAndDice(project.nodes[0], canvas, 0);
+const attribute: string = "rloc";
+const boxes: Box[] = sliceAndDice(project.nodes, canvas, attribute);
 
 const svg = select("body")
     .append("svg")

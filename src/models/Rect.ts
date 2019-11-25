@@ -1,27 +1,43 @@
 export default class Rect {
     //x and y of top left corner
-    p: [number, number];
+    topLeft: [number, number];
     //x and y of bottom right corner
-    q: [number, number];
+    bottomRight: [number, number];
 
-    constructor(p: [number, number], q: [number, number]) {
-        this.p = p;
-        this.q = q;
+    constructor(topLeft: [number, number], bottomRight: [number, number]) {
+        this.topLeft = topLeft;
+        this.bottomRight = bottomRight;
     }
 
     width(): number {
-        return this.q[0] - this.p[0];
+        return this.bottomRight[0] - this.topLeft[0];
     }
 
     height(): number {
-        return this.q[1] - this.p[1];
+        return this.bottomRight[1] - this.topLeft[1];
     }
 
     posX(): number {
-        return this.p[0];
+        return this.topLeft[0];
     }
 
     posY(): number {
-        return this.p[1];
+        return this.topLeft[1];
+    }
+
+    shorterSide(): number {
+        return this.width() > this.height() ? this.height() : this.width();
+    }
+
+    longerSide(): number {
+        return this.width() > this.height() ? this.width() : this.height();
+    }
+
+    aspectRatio(): number {
+        return this.longerSide() / this.shorterSide();
+    }
+
+    isVertical(): boolean {
+        return this.height() < this.width();
     }
 }
