@@ -4,8 +4,8 @@ import Node from "./models/Node";
 
 let boxes: Box[] = [];
 
-export default function(nodes: Node[], rect: Rect, attribute: string): Box[] {
-    sliceAndDice(nodes[0], rect, 0, attribute);
+export default function(nodes: Node[], canvas: Rect, attribute: string): Box[] {
+    sliceAndDice(nodes[0], canvas, 0, attribute);
     return boxes;
 }
 
