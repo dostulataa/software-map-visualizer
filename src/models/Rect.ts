@@ -1,8 +1,7 @@
 export default class Rect {
-    //x and y of top left corner
-    topLeft: [number, number];
-    //x and y of bottom right corner
-    bottomRight: [number, number];
+    topLeft: [number, number];      //x and y of top left corner
+    bottomRight: [number, number];  //x and y of bottom right corner
+
 
     constructor(topLeft: [number, number], bottomRight: [number, number]) {
         this.topLeft = topLeft;
@@ -38,6 +37,6 @@ export default class Rect {
     }
 
     isVertical(): boolean {
-        return this.height() < this.width();
+        return this.height() > this.width();
     }
 }

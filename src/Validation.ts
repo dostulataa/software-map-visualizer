@@ -18,11 +18,4 @@ export default class Validation {
     static isEmptyElement(data: any, key: string): boolean {
         return Object.keys(data[key]).length === 0;
     }
-
-    // static validate(schema: Object, data: Object) {
-    //     const ajv = new Ajv();
-    //     const valid = ajv.validate(schema, data);
-    //     console.log("this is valid: " + valid);
-    //     if(!valid) console.log(ajv.errors);
-    // }
 }
