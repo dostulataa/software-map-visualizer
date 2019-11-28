@@ -13,7 +13,7 @@ let boxes: Box[] = [];
  * @param canvas rectangle in which the treemap should be placed
  * @param attribute attribute by which nodes are scaled
  */
-export default function (nodes: Node[], canvas: Rect, attribute: string): Box[] {
+export default function squarify(nodes: Node[], canvas: Rect, attribute: string): Box[] {
     let root = nodes[0];
     let children: Node[] | undefined = root.children;
     boxes.push(new Box(root.name, canvas, root.attributes, root.type));
@@ -21,7 +21,7 @@ export default function (nodes: Node[], canvas: Rect, attribute: string): Box[] 
         return boxes;
     }
     children = sort(children, attribute);
-    squarify(children, canvas, attribute, root.size(attribute));
+    treemap(children, canvas, attribute, root.size(attribute));
     return boxes;
 }
 
@@ -34,7 +34,7 @@ export default function (nodes: Node[], canvas: Rect, attribute: string): Box[] 
  * @param attribute attribute by which nodes are scaled
  * @param rootSize 
  */
-function squarify(children: Node[], rect: Rect, attribute: string, rootSize: number) {
+function treemap(children: Node[], rect: Rect, attribute: string, rootSize: number) {
     let processed = 0;
 
     do {
@@ -63,7 +63,7 @@ function squarify(children: Node[], rect: Rect, attribute: string, rootSize: num
         for (let i = 0; i < row.length; i++) {
             const node: Node = row[i];
             if (node.children) {
-                squarify(node.children, rects[i], attribute, node.size(attribute));
+                treemap(node.children, rects[i], attribute, node.size(attribute));
             }
         }
         rect = remainingRect(row, rect, attribute, rootSize);
