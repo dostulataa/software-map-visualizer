@@ -12,8 +12,8 @@ let boxes: Box[] = [];
  * @param canvas rectangle in which the treemap should be placed
  * @param attribute attribute by which nodes are scaled
  */
-export default function (nodes: Node[], canvas: Rect, attribute: string): Box[] {
-    sliceAndDice(nodes[0], canvas, 0, attribute);
+export default function sliceAndDice(nodes: Node[], canvas: Rect, attribute: string): Box[] {
+    treemap(nodes[0], canvas.topLeft[0], canvas.topLeft[1], canvas.bottomRight[0], canvas.bottomRight[1], 0, attribute);
     return boxes;
 }
 
@@ -22,23 +22,27 @@ export default function (nodes: Node[], canvas: Rect, attribute: string): Box[] 
  * The actual algorithm function that creates the Treemap 
  * 
  * @param root root node of the project
- * @param rect rectangle in which the treemap should be placed
  * @param axis axis of current recursion level. Changes between 0 and 1
+ * @param tlX X Coordinate of the rectangle's topLeft pointer
+ * @param tlY Y Coordinate of the rectangle's topLeft pointer
+ * @param brX X Coordinate of the rectangle's bottomRight pointer
+ * @param brY Y Coordinate of the rectangle's bottomRight pointer
  * @param attribute attribute by which nodes are scaled
  */
-function sliceAndDice(root: Node, rect: Rect, axis: number, attribute: string) {
+function treemap(root: Node, tlX: number, tlY: number, brX: number, brY: number, axis: number, attribute: string) {
+    let newRect = new Rect([tlX, tlY], [brX, brY]);
     //adds new box for node
-    boxes.push(new Box(root.name, new Rect([rect.topLeft[0], rect.topLeft[1]], [rect.bottomRight[0], rect.bottomRight[1]]), root.attributes, root.type));
+    boxes.push(new Box(root.name, new Rect([tlX, tlY], [brX, brY]), root.attributes, root.type));
     //uses x or y coord depending on orientation of the rectangle
-    let width = rect.bottomRight[axis] - rect.topLeft[axis];
+    let width = newRect.bottomRight[axis] - newRect.topLeft[axis];
 
     if (root.children !== undefined) {
         for (const child of root.children) {
             //sets position of new rectangle
-            rect.bottomRight[axis] = rect.topLeft[axis] + child.size(attribute) / root.size(attribute) * width;
+            newRect.bottomRight[axis] = newRect.topLeft[axis] + child.size(attribute) / root.size(attribute) * width;
             //go to child level and toggle axis
-            sliceAndDice(child, rect, 1 - axis, attribute);
-            rect.topLeft[axis] = rect.bottomRight[axis];
+            treemap(child, newRect.topLeft[0], newRect.topLeft[1], newRect.bottomRight[0], newRect.bottomRight[1], 1 - axis, attribute);
+            newRect.topLeft[axis] = newRect.bottomRight[axis];
         }
     }
 }

@@ -11,19 +11,18 @@ export default class Node {
      * @param data json data to create a Node from
      */
     static create(data: any): Node {
-
         const attributes: Map<string, number> = new Map();
         for (const key of Object.keys(data.attributes)) {
-            attributes.set(key, data.attributes[key]);
+            attributes.set(key, Number(data.attributes[key]));
         }
 
         let id: number | undefined = undefined;
-        if(data.id !== undefined) {
+        if (data.id !== undefined) {
             id = Number(data.id);
         }
 
         let children: Node[] | undefined;
-        if(data.children !== undefined && data.children.length > 0) {
+        if (data.children !== undefined && data.children.length > 0) {
             children = [];
             for (const child of data.children) {
                 const newChild: Node = Node.create(child);
@@ -32,7 +31,7 @@ export default class Node {
         }
 
         let link: string | undefined = undefined;
-        if(data.link !== undefined) {
+        if (data.link !== undefined) {
             link = data.link;
         }
 
@@ -57,15 +56,15 @@ export default class Node {
         if (this.children !== undefined) {
             let totalSize: number = 0;
             for (let child of this.children) {
-                let toAdd: number = child.size(attribute);
-                totalSize += toAdd;
+                totalSize += child.size(attribute);
             }
             return totalSize;
         }
         //Node is 'File' and should have attribute
-        const attributeValue: number | undefined = this.attributes.get(attribute);
+        let attributeValue: number | undefined = this.attributes.get(attribute);
         if (attributeValue === undefined) {
-            throw new Error("node '" + this.name + "' has no attribute " + attribute);
+            attributeValue = 0; //nodes that don't have the attribute are ignored
+            //throw new Error("node '" + this.name + "' has no attribute " + attribute);
         }
         return attributeValue;
     }

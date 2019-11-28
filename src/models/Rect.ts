@@ -28,14 +28,6 @@ export default class Rect {
         return this.width() > this.height() ? this.height() : this.width();
     }
 
-    longerSide(): number {
-        return this.width() > this.height() ? this.width() : this.height();
-    }
-
-    aspectRatio(): number {
-        return this.longerSide() / this.shorterSide();
-    }
-
     isVertical(): boolean {
         return this.height() > this.width();
     }
