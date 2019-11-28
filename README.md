@@ -31,7 +31,7 @@ localhost:8080
 
 You can then chose the algorithm that is used for the visualization in the dropdown menu.
 
-When you click on a node its name and attributes are displayed
+When you click on a node its name and attributes are displayed.
 
 To change the attribute by which the nodes are scaled you can change the global value 'attribute' in src/index.ts.
 
