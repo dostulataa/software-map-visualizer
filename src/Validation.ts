@@ -1,21 +1,17 @@
-export default class Validation {
-    
-    static checkData(data: any, schema: any) {
-        const Ajv = require('ajv');
-        const ajv = new Ajv({allErrors: true});
+export default function validateInputFiles(schema: any, inputFiles: any[]) {
+    const Ajv = require('ajv');
+    const ajv = new Ajv({ allErrors: true });
+
+    for (const data of inputFiles) {
         const valid = ajv.validate(schema, data);
-        return valid ? [] : ajv.errors;       
-    }
-
-    static isNullOrUndefined(data: any, key: string): boolean {
-        return data[key] === undefined || data[key] === null;
-    }
-
-    static isOfType(data: any, key: string, type: string): boolean {
-        return typeof data[key] === type;
-    }
-
-    static isEmptyElement(data: any, key: string): boolean {
-        return Object.keys(data[key]).length === 0;
+        if (!valid) {
+            let message: string = "";
+            for (const error of ajv.errors) {
+                message += "\n" + error.keyword + ": " + error.message;
+            }
+            throw new Error(message);
+        }
     }
 }
+
+

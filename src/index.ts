@@ -1,102 +1,95 @@
-import Validation from "./Validation";
-import Rect from "./models/Rect";
-import Box from "./models/Box";
-import Project from "./models/Project";
-import { default as data } from "./input/codeCharta";
+import validateInputFiles from "./Validation";
+import Rectangle from "./models/treemap/Rectangle";
+import TreemapNode from "./models/treemap/TreemapNode";
+import Project from "./models/codeCharta/Project";
+import codeCharta from "./input/codeCharta";
 import { default as schema } from "./schema";
-import { default as squarify } from "./squarified";
-import { default as sliceAndDice } from "./sliceAndDice";
+import { default as squarify } from "./algorithms/squarified";
 import { select, event } from "d3-selection";
 
-/* Check input data validity */
-const errors = Validation.checkData(data, schema);
-if (errors.length !== 0) {
-    let message: string = "";
-    for (const error of errors) {
-        message += "\n" + error.keyword + ": " + error.message;
-    }
-    throw new Error(message);
+const inputFiles = [codeCharta];
+validateInputFiles(schema, inputFiles); // Checks for input data validity with schema
+
+const treemapWidth = 800;
+const treemapHeight = 600;
+const projects = inputFiles.map(input => Project.create(input)); // Create projects for input files
+const metric = "rloc";
+
+for(const project of projects) {
+    createTreemap(project, squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, false);
 }
 
-const svg_width: number = 800; // width of the treemap
-const svg_height: number = 600; // height of the treemap
-const canvas: Rect = new Rect([0, 0], [svg_width, svg_height]); // canvas on which the treemap is drawn
-const margin = { top: 1, right: 1, bottom: 1, left: 1 }; // margin for file nodes to make underlying folder nodes visible
-const boxLabels = false // set to true, to have node names displayed
-const project: Project = Project.create(data); // project instance created from input data
-const attribute: string = "rloc"; // attribute to use for node size
-const algorithms = [squarify, sliceAndDice]; // implemented algorithms used for dropdown menu
-
-let boxes: Box[] = squarify(project.nodes, canvas, attribute);
-
-const svg = select("body")
-    .append("svg")
-    .attr("width", svg_width)
-    .attr("height", svg_height);
-
-createBoxes(boxLabels);
-createTreemapDropdown();
-
+// createTreemapDropdown(algorithms);
 
 /**
-* Draws boxes with d3
-* 
-* @param useText 'true' enables name labels on boxes (not recommended for larger projects)
-*/
-function createBoxes(useText: boolean) {
+ * Creates the Treemap using d3 for drawing
+ * @param project the project that should be visualized
+ * @param algorithm the treemap algorithm to be used
+ * @param canvas the canvas where a treemap is drawn on
+ * @param metric the metric to determine a nodes size
+ * @param leafMargin margin for leaf nodes to make underlying nodes visible
+ * @param labels labels in treemap nodes ('true' only recommended for small projects)
+ */
+function createTreemap(project: Project, algorithm: Function, canvas: Rectangle, metric: string, leafMargin: number, labels: boolean) {
+    let nodes: TreemapNode[] = algorithm(project.nodes, canvas, metric);
+
+    const svg = select("body")
+        .append("svg")
+        .attr("x", 0)
+        .attr("y", 200)
+        .attr("width", canvas.width())
+        .attr("height", canvas.height());
+
     const groups = svg.selectAll(".groups")
-        .data(boxes)
+        .data(nodes)
         .enter()
         .append("g")
-        .attr("class", "box");
+        .attr("class", "treemapNode");
 
     groups.append('rect')
-        .attr("x", (d: Box): number => { return d.rect.posX() + (isFile(d) ? margin.left : 0) })
-        .attr("y", (d: Box): number => { return d.rect.posY() + (isFile(d) ? margin.top : 0) })
-        .attr("height", (d: Box): number => { return d.rect.height() - (isFile(d) ? margin.top + margin.bottom : 0) })
-        .attr("width", (d: Box): number => { return d.rect.width() - (isFile(d) ? margin.left + margin.right : 0) })
-        .attr("fill", (d: Box): string => { return isFile(d) ? "LightSteelBlue" : "SteelBlue" })
+        .attr("x", (d: TreemapNode): number => { return d.rect.posX() + (isFile(d) ? leafMargin : 0) })
+        .attr("y", (d: TreemapNode): number => { return d.rect.posY() + (isFile(d) ? leafMargin : 0) })
+        .attr("height", (d: TreemapNode): number => { return d.rect.height() - (isFile(d) ? 2 * leafMargin : 0) })
+        .attr("width", (d: TreemapNode): number => { return d.rect.width() - (isFile(d) ? 2 * leafMargin : 0) })
+        .attr("fill", (d: TreemapNode): string => { return isFile(d) ? "LightSteelBlue" : "SteelBlue" })
         .on("mouseover", () => { select(event.currentTarget).style("fill", "lightgrey") })
-        .on("mouseout", (d: Box) => { select(event.currentTarget).style("fill", (isFile(d) ? "LightSteelBlue" : "SteelBlue")) })
+        .on("mouseout", (d: TreemapNode) => { select(event.currentTarget).style("fill", (isFile(d) ? "LightSteelBlue" : "SteelBlue")) })
         .on("click", createAttributeList);
 
-    if (useText) {
+    if (labels) {
         groups.append('text')
-            .text((d: Box): string => { return isFile(d) ? d.name : "" })
-            .attr("x", (d: Box): number => { return d.rect.posX() + d.rect.width() / 2 })
-            .attr("y", (d: Box): number => { return d.rect.posY() + d.rect.height() / 2 })
+            .text((d: TreemapNode): string => { return isFile(d) ? d.node.name : "" })
+            .attr("x", (d: TreemapNode): number => { return d.rect.posX() + d.rect.width() / 2 })
+            .attr("y", (d: TreemapNode): number => { return d.rect.posY() + d.rect.height() / 2 })
             .attr("text-anchor", "middle");
     }
 }
 
-/**
- * Creates the Dropdown Menu for Treemap Selection
- */
-function createTreemapDropdown() {
-    const dropDown = select("body")
-        .append("select")
-        .attr("id", "selectBox");
+// function createTreemapDropdown(algorithms: Function[]) {
+//     const dropDown = select("body")
+//         .append("select")
+//         .attr("id", "selectBox");
 
-    const selectBox = document.getElementById("selectBox");
-    if (!selectBox) throw new Error("selectBox not found");
-    selectBox.onchange = (e: any) => {
-        const algName = e.target.options[e.target.selectedIndex].value
-        const treemap = algorithms.find(alg => { return alg.name === algName; });
-        if (treemap) {
-            boxes = treemap(project.nodes, canvas, attribute);
-            createBoxes(false);
-        } else {
-            throw new Error("function '" + algName + "' does not exist.");
-        }
-    }
+//     const selectBox = document.getElementById("selectBox");
+//     if (!selectBox) throw new Error("selectBox not found");
+//     selectBox.onchange = (e: any) => {
+//         const algName = e.target.options[e.target.selectedIndex].value
+//         const treemap = algorithms.find(alg => { return alg.name === algName; });
+//         if (treemap) {
+//             console.log("ok");
+//         } else {
+//             throw new Error("function '" + algName + "' does not exist.");
+//         }
+//     }
 
-    dropDown.selectAll("options")
-        .data(algorithms)
-        .enter()
-        .append("option")
-        .text((d) => d.name)
-        .attr("value", (d) => d.name);
-}
+//     dropDown.selectAll("options")
+//         .data(algorithms)
+//         .enter()
+//         .append("option")
+//         .text((d) => d.name)
+//         .attr("value", (d) => d.name);
+// }
+
 
 /**
  * 
@@ -104,7 +97,7 @@ function createTreemapDropdown() {
  * 
  * @param box box with parameters 
  */
-function createAttributeList(box: Box) {
+function createAttributeList(treemapNode: TreemapNode) {
 
     let table = createTable();
     let header_row: HTMLElement = document.createElement("tr");
@@ -115,9 +108,9 @@ function createAttributeList(box: Box) {
     header_row.appendChild(header_cell1);
     header_row.appendChild(header_cell2);
     header_cell1.appendChild(document.createTextNode("name"));
-    header_cell2.appendChild(document.createTextNode(box.name));
+    header_cell2.appendChild(document.createTextNode(treemapNode.node.name));
 
-    box.attributes.forEach((paramValue: number, paramKey: string) => {
+    treemapNode.node.attributes.forEach((paramValue: number, paramKey: string) => {
         let row: HTMLElement = document.createElement("tr");
         let cell1: HTMLElement = document.createElement("td");
         let cell2: HTMLElement = document.createElement("td");
@@ -147,6 +140,6 @@ function createTable(): HTMLElement {
     return table;
 }
 
-function isFile(box: Box): boolean {
-    return box.type === "File";
+function isFile(treemapNode: TreemapNode): boolean {
+    return treemapNode.node.type === "File";
 }

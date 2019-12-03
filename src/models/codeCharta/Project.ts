@@ -3,11 +3,19 @@ import Edge from "./Edge";
 import AttributeTypes from "./AttributeTypes";
 
 export default class Project {
-    projectName: string;
-    apiVersion: string;
-    nodes: Node[];
-    edges?: Edge[] | undefined;
-    attributeTypes?: AttributeTypes | undefined;
+    public projectName: string;
+    public apiVersion: string;
+    public nodes: Node[];
+    public edges?: Edge[] | undefined;
+    public attributeTypes?: AttributeTypes | undefined;
+
+    private constructor(projectName: string, apiVersion: string, nodes: Node[], edges?: Edge[] | undefined, attributeTypes?: AttributeTypes) {
+        this.projectName = projectName;
+        this.apiVersion = apiVersion;
+        this.nodes = nodes;
+        this.edges = edges;
+        this.attributeTypes = attributeTypes;
+    }
 
     /**
      * Creates a new Project
@@ -32,13 +40,5 @@ export default class Project {
         let attributeTypes: AttributeTypes | undefined = AttributeTypes.create(data.attributeTypes);
 
         return new Project(data.projectName, data.apiVersion, nodes, edges, attributeTypes);
-    }
-
-    private constructor(projectName: string, apiVersion: string, nodes: Node[], edges?: Edge[] | undefined, attributeTypes?: AttributeTypes) {
-        this.projectName = projectName;
-        this.apiVersion = apiVersion;
-        this.nodes = nodes;
-        this.edges = edges;
-        this.attributeTypes = attributeTypes;
     }
 } 

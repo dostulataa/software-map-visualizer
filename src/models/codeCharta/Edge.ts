@@ -1,10 +1,9 @@
-import Validation from "../Validation";
 import EdgeAttribute from "./EdgeAttribute";
 
 export default class Edge {
-    fromNodeName: string;
-    toNodeName: string;
-    attributes: EdgeAttribute[];
+    public fromNodeName: string;
+    public toNodeName: string;
+    public attributes: EdgeAttribute[];
 
     private constructor(fromNodeName: string, toNodeName: string, attributes: EdgeAttribute[]) {
         this.fromNodeName = fromNodeName;

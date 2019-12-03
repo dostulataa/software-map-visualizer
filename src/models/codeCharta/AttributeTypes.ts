@@ -1,5 +1,3 @@
-import Validation from "../Validation";
-
 export default class AttributeTypes {
     public nodes?: Map<string, string> | undefined;
     public edges?: Map<string, string> | undefined;
@@ -14,7 +12,6 @@ export default class AttributeTypes {
      * @param data json data to create an AttributeTypes object from
      */
     public static create(data: any) {
-
         let nodes : Map<string, string> | undefined = undefined;
         if (data.nodes !== undefined) {
             nodes = new Map();
