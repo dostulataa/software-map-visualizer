@@ -4,6 +4,12 @@ export default class Rectangle {
 
 
     public constructor(topLeft: [number, number], bottomRight: [number, number]) {
+        if(topLeft[0] < 0 || topLeft[1] < 0) {
+            throw new Error("Rectangle's topleft can not have negative values.");
+        }
+        if(bottomRight[0] < 0 || bottomRight[1] < 0) {
+            throw new Error("Rectangle's bottomRight can not have negative values");
+        }
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
     }

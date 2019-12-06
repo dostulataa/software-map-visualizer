@@ -39,10 +39,12 @@ function treemap(root: Node, tlX: number, tlY: number, brX: number, brY: number,
     if (root.children !== undefined) {
         for (const child of root.children) {
             //sets position of new rectangle
-            newRect.bottomRight[axis] = newRect.topLeft[axis] + child.size(metric) / root.size(metric) * width;
-            //go to child level and toggle axis
-            treemap(child, newRect.topLeft[0], newRect.topLeft[1], newRect.bottomRight[0], newRect.bottomRight[1], 1 - axis, metric);
-            newRect.topLeft[axis] = newRect.bottomRight[axis];
+            if (root.size(metric) !== 0) {
+                newRect.bottomRight[axis] = newRect.topLeft[axis] + child.size(metric) / root.size(metric) * width;
+                //go to child level and toggle axis
+                treemap(child, newRect.topLeft[0], newRect.topLeft[1], newRect.bottomRight[0], newRect.bottomRight[1], 1 - axis, metric);
+                newRect.topLeft[axis] = newRect.bottomRight[axis];
+            }
         }
     }
 }

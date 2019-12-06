@@ -22,7 +22,7 @@ export default class Node {
     public size(metric: string): number {
         //calculates size of subelements recursively
         if (this.children !== undefined) {
-            let totalSize: number = 0;
+            let totalSize: number = 0.01;
             for (let child of this.children) {
                 totalSize += child.size(metric);
             }

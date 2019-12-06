@@ -189,7 +189,10 @@ function layoutRow(row: Node[], rect: Rectangle, metric: string, rootSize: numbe
     const rects: Rectangle[] = [];
 
     for (const node of row) {
-        const nodeW: number = scale(node.size(metric), rootSize, rect) / h;
+        let nodeW: number = scale(node.size(metric), rootSize, rect);
+        if(h !== 0) {
+            nodeW = nodeW / h;
+        }
         if (rect.isVertical()) {
             // if rectangle is vertical, row is layed out horizontally
             const newRect: Rectangle = new Rectangle([x, y], [x + nodeW, y + h]);
