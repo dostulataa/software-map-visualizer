@@ -1,4 +1,4 @@
-export default class AttributeTypes {
+export default class CCAttributeTypes {
     public nodes?: Map<string, string> | undefined;
     public edges?: Map<string, string> | undefined;
 
@@ -36,6 +36,6 @@ export default class AttributeTypes {
             return undefined;
         }
 
-        return new AttributeTypes(nodes, edges);
+        return new CCAttributeTypes(nodes, edges);
     }
 }

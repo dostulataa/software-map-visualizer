@@ -1,7 +1,7 @@
 import validateInputFiles from "./Validation";
 import Rectangle from "./models/treemap/Rectangle";
 import TreemapNode from "./models/treemap/TreemapNode";
-import Project from "./models/codeCharta/Project";
+import CCProject from "./models/codeCharta/CCProject";
 import junit2018 from "./input/junit5_2018-10-27.cc";
 import junit2019 from "./input/junit5_2019-10-26.cc";
 import schema from "./schema";
@@ -13,7 +13,7 @@ validateInputFiles(schema, inputFiles); // Checks for input data validity with s
 
 const treemapWidth = 600;
 const treemapHeight = 400;
-const projects = inputFiles.map(input => Project.create(input)); // Create projects for input files
+const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
 const metric = "rloc";
 
 const highlight: string[] = ["ReflectionUtilsTests.java", "VintageTestEngineDiscoveryTests.java", 
@@ -32,7 +32,7 @@ createTreemap(projects[1], squarify, new Rectangle([0, 0], [treemapWidth, treema
  * @param leafMargin margin for leaf nodes to make underlying nodes visible
  * @param labels labels in treemap nodes ('true' only recommended for small projects)
  */
-function createTreemap(project: Project, algorithm: Function, canvas: Rectangle, metric: string, leafMargin: number, labels: boolean, colId: string) {
+function createTreemap(project: CCProject, algorithm: Function, canvas: Rectangle, metric: string, leafMargin: number, labels: boolean, colId: string) {
     let nodes: TreemapNode[] = algorithm(project.nodes, canvas, metric);
 
     const column = select("#"+colId);
