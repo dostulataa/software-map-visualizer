@@ -1,5 +1,5 @@
 export default {
-	"projectName": "junit5",
+	"projectName": "junit5-2018",
 	"nodes": [{
 		"name": "root",
 		"type": "Folder",
