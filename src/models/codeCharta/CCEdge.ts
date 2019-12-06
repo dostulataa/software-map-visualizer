@@ -1,11 +1,11 @@
-import EdgeAttribute from "./EdgeAttribute";
+import CCEdgeAttribute from "./CCEdgeAttribute";
 
-export default class Edge {
+export default class CCEdge {
     public fromNodeName: string;
     public toNodeName: string;
-    public attributes: EdgeAttribute[];
+    public attributes: CCEdgeAttribute[];
 
-    private constructor(fromNodeName: string, toNodeName: string, attributes: EdgeAttribute[]) {
+    private constructor(fromNodeName: string, toNodeName: string, attributes: CCEdgeAttribute[]) {
         this.fromNodeName = fromNodeName;
         this.toNodeName = toNodeName;
         this.attributes = attributes;
@@ -16,11 +16,11 @@ export default class Edge {
      * @param data json data to create an Edge from
      */
     public static create(data: any) {
-        const edgeAttributes : EdgeAttribute[] = [];
+        const edgeAttributes : CCEdgeAttribute[] = [];
         for(const attribute of data.attributes) {
-            edgeAttributes.push(EdgeAttribute.create(attribute));
+            edgeAttributes.push(CCEdgeAttribute.create(attribute));
         }
         
-        return new Edge(data.fromNodeName, data.toNodeName, edgeAttributes);
+        return new CCEdge(data.fromNodeName, data.toNodeName, edgeAttributes);
     }
 }

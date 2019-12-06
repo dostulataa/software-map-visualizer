@@ -1,12 +1,12 @@
-export default class Node {
+export default class CCNode {
     public name: string;
     public type: "File" | "Folder";
     public attributes: Map<string, number>;
     public id?: number;
-    public children?: Node[];
+    public children?: CCNode[];
     public link?: string;
 
-    private constructor(name: string, type: "File" | "Folder", attributes: Map<string, number>, id?: number, children?: Node[] | undefined, link?: string | undefined) {
+    private constructor(name: string, type: "File" | "Folder", attributes: Map<string, number>, id?: number, children?: CCNode[] | undefined, link?: string | undefined) {
         this.name = name;
         this.type = type;
         this.id = id;
@@ -40,7 +40,7 @@ export default class Node {
      * Creates a new Node
      * @param data json data to create a Node from
      */
-    public static create(data: any): Node {
+    public static create(data: any): CCNode {
         const attributes: Map<string, number> = new Map();
         for (const key of Object.keys(data.attributes)) {
             attributes.set(key, Number(data.attributes[key]));
@@ -51,11 +51,11 @@ export default class Node {
             id = Number(data.id);
         }
 
-        let children: Node[] | undefined;
+        let children: CCNode[] | undefined;
         if (data.children !== undefined && data.children.length > 0) {
             children = [];
             for (const child of data.children) {
-                const newChild: Node = Node.create(child);
+                const newChild: CCNode = CCNode.create(child);
                 children.push(newChild);
             }
         }
@@ -65,6 +65,6 @@ export default class Node {
             link = data.link;
         }
 
-        return new Node(data.name, data.type, attributes, id, children, link);
+        return new CCNode(data.name, data.type, attributes, id, children, link);
     }
 }

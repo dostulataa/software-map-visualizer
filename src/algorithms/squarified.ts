@@ -1,6 +1,6 @@
 import Rectangle from "../models/treemap/Rectangle";
 import TreemapNode from "../models/treemap/TreemapNode";
-import Node from "../models/codeCharta/Node";
+import CCNode from "../models/codeCharta/CCNode";
 
 let treemapNodes: TreemapNode[] = [];
 
@@ -13,9 +13,9 @@ let treemapNodes: TreemapNode[] = [];
  * @param canvas rectangle in which the treemap should be placed
  * @param metric metric by which treemap nodes are scaled
  */
-export default function squarify(nodes: Node[], canvas: Rectangle, metric: string): TreemapNode[] {
+export default function squarify(nodes: CCNode[], canvas: Rectangle, metric: string): TreemapNode[] {
     let root = nodes[0];
-    let children: Node[] | undefined = root.children;
+    let children: CCNode[] | undefined = root.children;
     treemapNodes.push(new TreemapNode(canvas, root));
     if (children === undefined) {
         return treemapNodes;
@@ -33,20 +33,20 @@ export default function squarify(nodes: Node[], canvas: Rectangle, metric: strin
  * @param metric metric by which treemap nodes are scaled
  * @param rootSize size of the current root element calculated by metric  
  */
-function treemap(children: Node[], rect: Rectangle, metric: string, rootSize: number) {
+function treemap(children: CCNode[], rect: Rectangle, metric: string, rootSize: number) {
     let processed = 0;
     let currentRect = new Rectangle([rect.topLeft[0], rect.topLeft[1]], [rect.bottomRight[0], rect.bottomRight[1]]);
     let currentRootSize = rootSize;
 
     do {
         /* Push first unprocessed child -> row is empty and aspect ratio can't be worse */
-        let row: Node[] = [];
+        let row: CCNode[] = [];
         row.push(children[processed]);
 
         /* Push new nodes to row as long as worst aspect ratio decreases or is unchanged */
         while (processed + row.length < children.length) {
             const currentScore = worst(row, currentRect, metric, currentRootSize);
-            const newNode: Node = children[row.length + processed];
+            const newNode: CCNode = children[row.length + processed];
             const newScore = worst(row.concat(newNode), currentRect, metric, currentRootSize);
             if (newScore < currentScore) {
                 row.push(newNode);
@@ -62,7 +62,7 @@ function treemap(children: Node[], rect: Rectangle, metric: string, rootSize: nu
 
         /* Start squarify algorithm for children nodes that have children of their own */
         for (let i = 0; i < row.length; i++) {
-            const node: Node = row[i];
+            const node: CCNode = row[i];
             if (node.children) {
                 treemap(sort(node.children, metric), rects[i], metric, node.size(metric));
             }
@@ -80,7 +80,7 @@ function treemap(children: Node[], rect: Rectangle, metric: string, rootSize: nu
  * @param metric metric by which rectangle area is determined
  * @param rootSize metric size of parent node
  */
-function worst(row: Node[], rect: Rectangle, metric: string, rootSize: number): number {
+function worst(row: CCNode[], rect: Rectangle, metric: string, rootSize: number): number {
     const w = rect.shorterSide();
     const s: number = scale(totalSize(row, metric), rootSize, rect);
     const rowMax: number = max(row, rect, metric, rootSize);
@@ -110,7 +110,7 @@ function scale(size: number, rootSize: number, rect: Rectangle): number {
  * @param metric metric by which rectangle area is determined
  * @param rootSize size of the parent node
  */
-function min(row: Node[], rect: Rectangle, metric: string, rootSize: number): number {
+function min(row: CCNode[], rect: Rectangle, metric: string, rootSize: number): number {
     return row.reduce((min, n) => Math.min(min, scale(n.size(metric), rootSize, rect)), Number.MAX_VALUE);
 }
 
@@ -123,7 +123,7 @@ function min(row: Node[], rect: Rectangle, metric: string, rootSize: number): nu
  * @param metric metric by which rectangle area is determined
  * @param rootSize size of the parent node
  */
-function max(row: Node[], rect: Rectangle, metric: string, rootSize: number): number {
+function max(row: CCNode[], rect: Rectangle, metric: string, rootSize: number): number {
     return row.reduce((max, n) => Math.max(max, scale(n.size(metric), rootSize, rect)), Number.MIN_VALUE);
 }
 
@@ -134,7 +134,7 @@ function max(row: Node[], rect: Rectangle, metric: string, rootSize: number): nu
  * @param nodes list of nodes to be examined
  * @param metric metric by which rectangle area is determined
  */
-function totalSize(nodes: Node[], metric: string): number {
+function totalSize(nodes: CCNode[], metric: string): number {
     return nodes.reduce((total, n) => total + n.size(metric), 0);
 }
 
@@ -145,7 +145,7 @@ function totalSize(nodes: Node[], metric: string): number {
  * @param nodes list of nodes to be sorted
  * @param metric metric by which the list should be sorted
  */
-function sort(nodes: Node[], metric: string): Node[] {
+function sort(nodes: CCNode[], metric: string): CCNode[] {
     return nodes.sort((a, b) => { return b.size(metric) - a.size(metric) });
 }
 
@@ -158,7 +158,7 @@ function sort(nodes: Node[], metric: string): Node[] {
  * @param metric metric by which rectangle area is determined
  * @param rootSize metric size of rectangle
  */
-function remainingRect(row: Node[], rect: Rectangle, metric: string, rootSize: number) {
+function remainingRect(row: CCNode[], rect: Rectangle, metric: string, rootSize: number) {
     const w: number = rect.shorterSide();
     const totSize: number = scale(totalSize(row, metric), rootSize, rect);
     const h: number = totSize / w;
@@ -180,7 +180,7 @@ function remainingRect(row: Node[], rect: Rectangle, metric: string, rootSize: n
  * @param rect rectangle in which the row should be placed
  * @param rootSize metric size of the rectangle
  */
-function layoutRow(row: Node[], rect: Rectangle, metric: string, rootSize: number) {
+function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: number) {
     const rowSize: number = scale(totalSize(row, metric), rootSize, rect);
     const w = rect.shorterSide() > 0 ? rect.shorterSide() : 1; // row width (side of the rect on which nodes are to be laid out)
     const h: number = rowSize / w; // row height
