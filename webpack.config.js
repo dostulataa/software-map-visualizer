@@ -1,6 +1,8 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
 
 module.exports = {
   mode: 'development',
@@ -10,8 +12,12 @@ module.exports = {
     filename: 'bundle.js'
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: 'Software Map Visualization'
+      hash: true,
+      title: 'Software Map Visualization',
+      template: "./src/public/template.html",
+      filename: path.resolve("dist", "index.html")
     })
   ],
   module: {
@@ -29,7 +35,7 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: [ '.ts', '.js' ],
+    extensions: [ '.ts', '.js', '.html' ],
   },
   devServer: {
     contentBase: path.join(__dirname, 'dist'),

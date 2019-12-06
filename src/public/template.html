@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <title><%= htmlWebpackPlugin.options.title %></title>
+  <style>
+    .table-wrapper {
+      display: table;
+      width: 100%;
+    }
+
+    .table-wrapper .column,
+    .table-wrapper .spacer {
+      display: table-cell;
+    }
+
+    .table-wrapper .spacer {
+      width: 10px;
+    }
+    g.hover {
+    background-color: rgba(0, 0, 0, .5);
+}
+  </style>
+</head>
+
+<body>
+  <div class="table-wrapper">
+    <div class="column" id="leftColumn">
+      <h2 class="title"></h2>
+      <div class="treemap"></div>
+      <div class="attributes"></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="column" id="rightColumn">
+      <h2 class=title></h2>
+      <div class="treemap"></div>
+      <div class="attributes"></div>
+    </div>
+  </div>
+</body>
+
+</html>
