@@ -16,12 +16,12 @@ const treemapHeight = 400;
 const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
 const metric = "rloc";
 
-const highlight: string[] = ["ReflectionUtilsTests.java", "VintageTestEngineDiscoveryTests.java", 
-                            "ReflectionSupport.java", "DefaultParallelExecutionConfigurationStrategy.java",
-                            "ParameterizedTestIntegrationTests.java"];
+const highlight: string[] = ["ReflectionUtilsTests.java", "VintageTestEngineDiscoveryTests.java",
+    "ReflectionSupport.java", "DefaultParallelExecutionConfigurationStrategy.java",
+    "ParameterizedTestIntegrationTests.java"];
 
-createTreemap(projects[0], squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, false, "leftColumn");
-createTreemap(projects[1], squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, false, "rightColumn");
+createTreemap(projects[0], squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, "oldVersion");
+createTreemap(projects[1], squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, "newVersion");
 
 /**
  * Creates the Treemap using d3 for drawing
@@ -30,19 +30,17 @@ createTreemap(projects[1], squarify, new Rectangle([0, 0], [treemapWidth, treema
  * @param canvas the canvas where a treemap is drawn on
  * @param metric the metric to determine a nodes size
  * @param leafMargin margin for leaf nodes to make underlying nodes visible
- * @param labels labels in treemap nodes ('true' only recommended for small projects)
+ * @param versionId id of the version column
  */
-function createTreemap(project: CCProject, algorithm: Function, canvas: Rectangle, metric: string, leafMargin: number, labels: boolean, colId: string) {
+function createTreemap(project: CCProject, algorithm: Function, canvas: Rectangle, metric: string, leafMargin: number, versionId: string) {
     let nodes: TreemapNode[] = algorithm(project.nodes, canvas, metric);
 
-    const column = select("#"+colId);
+    const codeVersion = select(`#${versionId}`);
 
-    column.select(".title").text(project.projectName);
+    codeVersion.select(".title").text(project.projectName);
 
-    const svg = column.select(".treemap")
+    const svg = codeVersion.select(".treemap")
         .append("svg")
-        .attr("x", 0)
-        .attr("y", 200)
         .attr("width", canvas.width())
         .attr("height", canvas.height());
 
@@ -53,23 +51,15 @@ function createTreemap(project: CCProject, algorithm: Function, canvas: Rectangl
         .attr("class", "treemapNode");
 
     groups.append('rect')
-        .attr("id", (d:TreemapNode): string => { return colId + "-" + d.node.name})
-        .attr("x", (d: TreemapNode): number => { return d.rect.posX() + (isFile(d) ? leafMargin : 0) })
-        .attr("y", (d: TreemapNode): number => { return d.rect.posY() + (isFile(d) ? leafMargin : 0) })
-        .attr("height", (d: TreemapNode): number => { return d.rect.height() - (isFile(d) && d.rect.height() > 2 * leafMargin ? 2 * leafMargin : 0) })
-        .attr("width", (d: TreemapNode): number => { return d.rect.width() - (isFile(d) && d.rect.width() > 2 * leafMargin ? 2 * leafMargin : 0) })
+        .attr("id", (d: TreemapNode): string => { return versionId + "-" + d.node.name })
+        .attr("x", (d: TreemapNode): number => { return d.rectangle.posX() + (isFile(d) ? leafMargin : 0) })
+        .attr("y", (d: TreemapNode): number => { return d.rectangle.posY() + (isFile(d) ? leafMargin : 0) })
+        .attr("height", (d: TreemapNode): number => { return d.rectangle.height() - (isFile(d) && d.rectangle.height() > 2 * leafMargin ? 2 * leafMargin : 0) })
+        .attr("width", (d: TreemapNode): number => { return d.rectangle.width() - (isFile(d) && d.rectangle.width() > 2 * leafMargin ? 2 * leafMargin : 0) })
         .attr("fill", (d: TreemapNode): string => { return isFile(d) ? (highlight.includes(d.node.name) ? "blue" : "LightSteelBlue") : "SteelBlue" })
         .on("mouseover", () => { select(event.currentTarget).style("fill", "lightgrey") })
         .on("mouseout", (d: TreemapNode) => { select(event.currentTarget).style("fill", (isFile(d) ? (highlight.includes(d.node.name) ? "blue" : "LightSteelBlue") : "SteelBlue")) })
         .on("click", createAttributeList);
-
-    if (labels) {
-        groups.append('text')
-            .text((d: TreemapNode): string => { return isFile(d) ? d.node.name : "" })
-            .attr("x", (d: TreemapNode): number => { return d.rect.posX() + d.rect.width() / 2 })
-            .attr("y", (d: TreemapNode): number => { return d.rect.posY() + d.rect.height() / 2 })
-            .attr("text-anchor", "middle");
-    }
 }
 
 /**
@@ -80,24 +70,33 @@ function createTreemap(project: CCProject, algorithm: Function, canvas: Rectangl
  */
 function createAttributeList(treemapNode: TreemapNode) {
 
-    const column = select(event.currentTarget.closest(".column"));
-    const attributeContainer = column.select(".attributes");
-    if(!attributeContainer.select("table").empty()) {
+    const codeVersion = select(event.currentTarget.closest(".codeVersion"));
+    const attributeContainer = codeVersion.select(".attributes");
+    if (!attributeContainer.select("table").empty()) {
         attributeContainer.select("table").remove();
     }
     const table = attributeContainer.append("table");
-    
-    let headerRow = table.append("tr");
-    let headerCellLeft = headerRow.append("th");
-    let headerCellRight = headerRow.append("th");
+
+    const headerRow = table.append("tr");
+    const headerCellLeft = headerRow.append("th");
+    const headerCellRight = headerRow.append("th");
 
     headerCellLeft.text("name");
     headerCellRight.text(treemapNode.node.name);
 
     treemapNode.node.attributes.forEach((value: number, key: string) => {
-        const row = table.append("tr")
-        row.append("td").text(key);
-        row.append("td").text(String(value))
+        const row = table.append("tr");
+        let td = row.append("td").text(key);
+        td.style("cursor", "pointer");
+        td.on("mouseover", () => { select(event.currentTarget).style("background", "lightgrey") });
+        td.on("mouseout", () => { select(event.currentTarget).style("background", "white") });
+        td.on("click", function () {
+            codeVersion.select("svg").remove();
+            let versionId = codeVersion.attr("id");
+            let project = versionId === "oldVersion" ? projects[0] : projects[1];
+            createTreemap(project, squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), event.currentTarget.textContent, 1, codeVersion.attr("id"));
+        });
+        row.append("td").text(String(value));
     });
 }
 

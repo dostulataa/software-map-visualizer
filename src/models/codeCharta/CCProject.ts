@@ -9,7 +9,7 @@ export default class CCProject {
     public edges?: CCEdge[] | undefined;
     public attributeTypes?: CCAttributeTypes | undefined;
 
-    private constructor(projectName: string, apiVersion: string, nodes: CCNode[], edges?: CCEdge[] | undefined, attributeTypes?: CCAttributeTypes) {
+    private constructor(projectName: string, apiVersion: string, nodes: CCNode[], edges?: CCEdge[] | undefined, attributeTypes?: CCAttributeTypes | undefined) {
         this.projectName = projectName;
         this.apiVersion = apiVersion;
         this.nodes = nodes;

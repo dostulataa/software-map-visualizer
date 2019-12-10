@@ -8,7 +8,7 @@ export default {
 			"attributes": {},
 			"children": [
                 {
-                    "name": "fistFile.ts",
+                    "name": "6",
 					"type": "File",
 					"attributes": {
                         "rloc": 6
@@ -16,7 +16,7 @@ export default {
 					"link": "http://www.google.de"
                 },
                 {
-                    "name": "secondFile.ts",
+                    "name": "4",
 					"type": "File",
 					"attributes": {
                         "rloc": 4
@@ -24,7 +24,7 @@ export default {
 					"link": "http://www.google.de"
                 },
                 {
-                    "name": "thirdFile.ts",
+                    "name": "2",
                     "type": "File",
                     "attributes": {
                         "rloc": 2
@@ -32,7 +32,7 @@ export default {
                     "link": "http://www.google.de"
                 },
                 {
-                    "name": "fourthFile.ts",
+                    "name": "6",
                     "type": "File",
                     "attributes": {
                         "rloc": 6
@@ -40,7 +40,7 @@ export default {
                     "link": "http://www.google.de"
                 },
                 {
-                    "name": "fifthFile.ts",
+                    "name": "2",
                     "type": "File",
                     "attributes": {
                         "rloc": 2
@@ -48,7 +48,7 @@ export default {
                     "link": "http://www.google.de"
                 },
                 {
-                    "name": "sixthFile.ts",
+                    "name": "3",
 					"type": "File",
 					"attributes": {
 						"rloc": 3
@@ -56,7 +56,7 @@ export default {
 					"link": "http://www.google.de"
                 },
                 {
-					"name": "seventhFile.ts",
+					"name": "1",
 					"type": "File",
 					"attributes": {
 						"rloc": 1
