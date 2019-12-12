@@ -32,7 +32,7 @@ export default function sliceAndDice(nodes: CCNode[], canvas: Rectangle, metric:
 function treemap(root: CCNode, tlX: number, tlY: number, brX: number, brY: number, axis: number, metric: string) {
     let newRect = new Rectangle([tlX, tlY], [brX, brY]);
     //adds new Treemap Node for Code Charta Node
-    treemapNodes.push(new TreemapNode(new Rectangle([tlX, tlY], [brX, brY]), root));
+    treemapNodes.push(new TreemapNode(new Rectangle([tlX, tlY], [brX, brY]), root, colorize(root)));
     //uses x or y coord depending on orientation of the rectangle
     let width = newRect.bottomRight[axis] - newRect.topLeft[axis];
 
@@ -47,4 +47,8 @@ function treemap(root: CCNode, tlX: number, tlY: number, brX: number, brY: numbe
             }
         }
     }
+}
+
+function colorize(node: CCNode): string {
+    return node.type === "File" ? "LightSteelBlue" : "SteelBlue";
 }

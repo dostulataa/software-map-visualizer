@@ -16,7 +16,7 @@ let treemapNodes: TreemapNode[] = [];
 export default function squarify(nodes: CCNode[], canvas: Rectangle, metric: string): TreemapNode[] {
     let root = nodes[0];
     let children: CCNode[] | undefined = root.children;
-    treemapNodes.push(new TreemapNode(canvas, root));
+    treemapNodes.push(new TreemapNode(canvas, root, colorize(root)));
     if (children === undefined) {
         return treemapNodes;
     }
@@ -196,17 +196,21 @@ function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: num
         if (rect.isVertical()) {
             // if rectangle is vertical, row is layed out horizontally
             const newRect: Rectangle = new Rectangle([x, y], [x + nodeW, y + h]);
-            treemapNodes.push(new TreemapNode(newRect, node));
+            treemapNodes.push(new TreemapNode(newRect, node, colorize(node)));
             rects.push(newRect);
             x += nodeW;
         } else {
             // if rectangle is horizontal, row is layed out vertically
             const newRect: Rectangle = new Rectangle([x, y], [x + h, y + nodeW]);
-            treemapNodes.push(new TreemapNode(newRect, node));
+            treemapNodes.push(new TreemapNode(newRect, node, colorize(node)));
             rects.push(newRect);
             y += nodeW;
         }
     }
 
     return rects;
+}
+
+function colorize(node: CCNode): string {
+    return node.type === "File" ? "LightSteelBlue" : "SteelBlue";
 }
