@@ -57,7 +57,7 @@ function createTreemap(project: CCProject, algorithm: Function, canvas: Rectangl
 }
 
 /**
- * handles mouse going inside of a treemap node. Changes its color to highlighting color.
+ * Handles mouse going inside of a treemap node. Changes color to highlighting color.
  * 
  * @param treemapNode treemap node which event is registered on 
  */
@@ -70,7 +70,7 @@ function handleMouseover(treemapNode: TreemapNode) {
 }
 
 /**
- * Handles mouse going out of a treemap node. Reverts its color back to original color.
+ * Handles mouse going out of a treemap node. Reverts color back to original color.
  * 
  * @param treemapNode treemap node which event is registered on 
  */
@@ -83,7 +83,7 @@ function handleMouseout(treemapNode: TreemapNode) {
 }
 
 /**
- * colorizes the node with same name (it it exists) in other treemap version
+ * colorizes the node with same name (if it exists) in other treemap version
  * 
  * @param codeVersionId the code version id where event node lies 
  * @param nodeId id of event node
