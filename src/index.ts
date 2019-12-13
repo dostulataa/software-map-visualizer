@@ -50,7 +50,7 @@ function createTreemap(project: CCProject, algorithm: Function, canvas: Rectangl
         .attr("y", (d: TreemapNode): number => { return d.rectangle.posY() + (isFile(d) ? leafMargin : 0) })
         .attr("height", (d: TreemapNode): number => { return d.rectangle.height() - (isFile(d) && d.rectangle.height() > 2 * leafMargin ? 2 * leafMargin : 0) })
         .attr("width", (d: TreemapNode): number => { return d.rectangle.width() - (isFile(d) && d.rectangle.width() > 2 * leafMargin ? 2 * leafMargin : 0) })
-        .attr("fill", (d: TreemapNode): string => { return d.color })
+        .style("fill", (d: TreemapNode): string => { return d.color })
         .on("mouseover", handleMouseover)
         .on("mouseout", handleMouseout)
         .on("click", createAttributeList);
@@ -94,6 +94,7 @@ function colorizeOtherNode(codeVersionId: string, nodeId: string, color: string)
     const otherId = `#${otherCodeVersionId}-${nodeId}`;
     const otherNode = select(otherId);
     if (!otherNode.empty()) {
+        // console.log(otherNode.node());
         // console.log(`recolored ${otherId} with color ${color}`);
         otherNode.style("fill", color);
         // console.log(`${otherNode.style("fill")}`);

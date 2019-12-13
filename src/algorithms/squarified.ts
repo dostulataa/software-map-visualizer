@@ -212,5 +212,5 @@ function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: num
 }
 
 function colorize(node: CCNode): string {
-    return node.type === "File" ? "LightSteelBlue" : "SteelBlue";
+    return node.type === "File" ? "lightsteelblue" : "SteelBlue";
 }
