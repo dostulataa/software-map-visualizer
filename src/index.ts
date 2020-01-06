@@ -2,11 +2,12 @@ import validateInputFiles from "./Validation";
 import Rectangle from "./models/treemap/Rectangle";
 import TreemapNode from "./models/treemap/TreemapNode";
 import CCProject from "./models/codeCharta/CCProject";
-import junit2018 from "./input/junit5_2018-10-27.cc";
+import junit2018 from "./input/example2";
 import junit2019 from "./input/junit5_2019-10-26.cc";
 import schema from "./schema";
 import { select, event } from "d3-selection";
 import squarify from "./algorithms/squarified";
+import cityMap from "./algorithms/cityMap";
 
 const inputFiles = [junit2018, junit2019];
 validateInputFiles(schema, inputFiles); // Checks for input data validity with schema
@@ -14,10 +15,9 @@ validateInputFiles(schema, inputFiles); // Checks for input data validity with s
 const treemapWidth = 600;
 const treemapHeight = 400;
 const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
-const metric = "mcc";
+const metric = "rloc";
 
-createTreemap(projects[0], squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, "oldVersion");
-createTreemap(projects[1], squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, "newVersion");
+createTreemap(projects[0], cityMap, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, "oldVersion");
 
 /**
  * Creates the Treemap using d3 for drawing
