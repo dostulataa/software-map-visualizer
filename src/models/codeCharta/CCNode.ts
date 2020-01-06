@@ -2,16 +2,16 @@ export default class CCNode {
     public name: string;
     public type: "File" | "Folder";
     public attributes: Map<string, number>;
+    public children: CCNode[];
     public id?: number;
-    public children?: CCNode[];
     public link?: string;
 
-    private constructor(name: string, type: "File" | "Folder", attributes: Map<string, number>, id?: number, children?: CCNode[] | undefined, link?: string | undefined) {
+    private constructor(name: string, type: "File" | "Folder", attributes: Map<string, number>, children: CCNode[], id?: number, link?: string | undefined) {
         this.name = name;
         this.type = type;
-        this.id = id;
-        this.children = children;
         this.attributes = attributes;
+        this.children = children;
+        this.id = id;
         this.link = link;
     }
 
@@ -21,8 +21,8 @@ export default class CCNode {
      */
     public size(metric: string): number {
         //calculates size of subelements recursively
-        if (this.children !== undefined) {
-            let totalSize: number = 0.01;
+        let totalSize: number = 0.01;
+        if(this.children.length > 0) {
             for (let child of this.children) {
                 totalSize += child.size(metric);
             }
@@ -51,9 +51,8 @@ export default class CCNode {
             id = Number(data.id);
         }
 
-        let children: CCNode[] | undefined;
+        let children: CCNode[] = [];
         if (data.children !== undefined && data.children.length > 0) {
-            children = [];
             for (const child of data.children) {
                 const newChild: CCNode = CCNode.create(child);
                 children.push(newChild);
@@ -65,6 +64,6 @@ export default class CCNode {
             link = data.link;
         }
 
-        return new CCNode(data.name, data.type, attributes, id, children, link);
+        return new CCNode(data.name, data.type, attributes, children, id, link);
     }
 }

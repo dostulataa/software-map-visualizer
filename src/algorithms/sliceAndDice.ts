@@ -36,15 +36,13 @@ function treemap(root: CCNode, tlX: number, tlY: number, brX: number, brY: numbe
     //uses x or y coord depending on orientation of the rectangle
     let width = newRect.bottomRight[axis] - newRect.topLeft[axis];
 
-    if (root.children !== undefined) {
-        for (const child of root.children) {
-            //sets position of new rectangle
-            if (root.size(metric) !== 0) {
-                newRect.bottomRight[axis] = newRect.topLeft[axis] + child.size(metric) / root.size(metric) * width;
-                //go to child level and toggle axis
-                treemap(child, newRect.topLeft[0], newRect.topLeft[1], newRect.bottomRight[0], newRect.bottomRight[1], 1 - axis, metric);
-                newRect.topLeft[axis] = newRect.bottomRight[axis];
-            }
+    for (const child of root.children) {
+        //sets position of new rectangle
+        if (root.size(metric) !== 0) {
+            newRect.bottomRight[axis] = newRect.topLeft[axis] + child.size(metric) / root.size(metric) * width;
+            //go to child level and toggle axis
+            treemap(child, newRect.topLeft[0], newRect.topLeft[1], newRect.bottomRight[0], newRect.bottomRight[1], 1 - axis, metric);
+            newRect.topLeft[axis] = newRect.bottomRight[axis];
         }
     }
 }

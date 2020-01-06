@@ -15,9 +15,9 @@ let treemapNodes: TreemapNode[] = [];
  */
 export default function squarify(nodes: CCNode[], canvas: Rectangle, metric: string): TreemapNode[] {
     let root = nodes[0];
-    let children: CCNode[] | undefined = root.children;
+    let children: CCNode[] = root.children;
     treemapNodes.push(new TreemapNode(canvas, root, colorize(root)));
-    if (children === undefined) {
+    if (children.length === 0) {
         return treemapNodes;
     }
     treemap(sort(children, metric), canvas, metric, root.size(metric));
@@ -63,7 +63,7 @@ function treemap(children: CCNode[], rect: Rectangle, metric: string, rootSize: 
         /* Start squarify algorithm for children nodes that have children of their own */
         for (let i = 0; i < row.length; i++) {
             const node: CCNode = row[i];
-            if (node.children) {
+            if (node.children.length > 0) {
                 treemap(sort(node.children, metric), rects[i], metric, node.size(metric));
             }
         }
@@ -135,7 +135,12 @@ function max(row: CCNode[], rect: Rectangle, metric: string, rootSize: number): 
  * @param metric metric by which rectangle area is determined
  */
 function totalSize(nodes: CCNode[], metric: string): number {
-    return nodes.reduce((total, n) => total + n.size(metric), 0);
+    let total = 0;
+    for (const a of nodes) {
+        total += a.size(metric);
+    }
+    return total;
+    // return nodes.reduce((total, n) => total + n.size(metric), 0);
 }
 
 /**
@@ -193,6 +198,7 @@ function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: num
         if(h !== 0) {
             nodeW = nodeW / h;
         }
+        console.log(nodeW)
         if (rect.isVertical()) {
             // if rectangle is vertical, row is layed out horizontally
             const newRect: Rectangle = new Rectangle([x, y], [x + nodeW, y + h]);
