@@ -1,5 +1,5 @@
-import Rectangle from "../models/treemap/Rectangle";
-import TreemapNode from "../models/treemap/TreemapNode";
+import Rectangle from "../models/visualization/Rectangle";
+import TreemapNode from "../models/visualization/VisualizationNode";
 import CCNode from "../models/codeCharta/CCNode";
 
 let treemapNodes: TreemapNode[] = [];

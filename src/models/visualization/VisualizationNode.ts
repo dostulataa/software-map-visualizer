@@ -1,7 +1,7 @@
 import Rectangle from "./Rectangle";
 import CCNode from "../codeCharta/CCNode";
 
-export default class TreemapNode {
+export default class VisualizationNode {
     public rectangle: Rectangle;
     public node: CCNode;
     public color: string;

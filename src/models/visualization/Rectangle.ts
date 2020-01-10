@@ -1,4 +1,4 @@
-export const enum Rotations {
+export const enum Rotation {
     SINGLEROTATION = 90,
     DOUBLEROTATION = 180,
     TRIPLEROTATION = 270
@@ -26,21 +26,21 @@ export default class Rectangle {
         this.bottomRight = bottomRight;
     }
 
-    public rotateAroundPoint(rotationPoint: [number, number], angle: Rotations): Rectangle {
+    public rotateAroundPoint(rotationPoint: [number, number], angle: Rotation): Rectangle {
         let topLeft: [number, number] = this.rotate(rotationPoint[0], rotationPoint[1], this.topLeft[0], this.topLeft[1], angle);
         let bottomRight: [number, number] = this.rotate(rotationPoint[0], rotationPoint[1], this.bottomRight[0], this.bottomRight[1], angle);
 
         switch (angle) {
-            case Rotations.SINGLEROTATION:
+            case Rotation.SINGLEROTATION:
                 topLeft[0] -= this.height();
                 bottomRight[0] += this.height();
                 break;
-            case Rotations.DOUBLEROTATION:
+            case Rotation.DOUBLEROTATION:
                 const tl: [number, number] = topLeft;
                 topLeft = bottomRight;
                 bottomRight = tl;
                 break;
-            case Rotations.TRIPLEROTATION:
+            case Rotation.TRIPLEROTATION:
                 topLeft[1] -= this.width();
                 bottomRight[1] += this.width();
                 break;

@@ -1,7 +1,7 @@
-import Rectangle from "../models/treemap/Rectangle";
-import TreemapNode from "../models/treemap/TreemapNode";
+import Rectangle from "../models/visualization/Rectangle";
+import TreemapNode from "../models/visualization/VisualizationNode";
 import CCNode from "../models/codeCharta/CCNode";
-import { Rotations } from "../models/treemap/Rectangle";
+import { Rotation } from "../models/visualization/Rectangle";
 
 let treemapNodes: TreemapNode[] = [];
 
@@ -174,30 +174,30 @@ function calcAngle(type: string, depth: number, isFirstRow: boolean): number {
     switch (depth) {
         case 0:
             if (isFirstRow) {
-                angle = type === "Folder" ? Rotations.TRIPLEROTATION : 0;
+                angle = type === "Folder" ? Rotation.TRIPLEROTATION : 0;
             } else {
-                angle = type === "Folder" ? Rotations.SINGLEROTATION : 0;
+                angle = type === "Folder" ? Rotation.SINGLEROTATION : 0;
             }
             break;
         case 1:
             if (isFirstRow) {
-                angle = type === "Folder" ? Rotations.DOUBLEROTATION : Rotations.TRIPLEROTATION;
+                angle = type === "Folder" ? Rotation.DOUBLEROTATION : Rotation.TRIPLEROTATION;
             } else {
-                angle = type === "Folder" ? 0 : Rotations.TRIPLEROTATION;
+                angle = type === "Folder" ? 0 : Rotation.TRIPLEROTATION;
             }
             break;
         case 2:
             if (isFirstRow) {
-                angle = type === "Folder" ? Rotations.SINGLEROTATION : Rotations.DOUBLEROTATION;
+                angle = type === "Folder" ? Rotation.SINGLEROTATION : Rotation.DOUBLEROTATION;
             } else {
-                angle = type === "Folder" ? Rotations.TRIPLEROTATION : Rotations.DOUBLEROTATION;
+                angle = type === "Folder" ? Rotation.TRIPLEROTATION : Rotation.DOUBLEROTATION;
             }
             break;
         case 3:
             if (isFirstRow) {
-                angle = type === "Folder" ? 0 : Rotations.SINGLEROTATION;
+                angle = type === "Folder" ? 0 : Rotation.SINGLEROTATION;
             } else {
-                angle = type === "Folder" ? Rotations.DOUBLEROTATION : Rotations.SINGLEROTATION;
+                angle = type === "Folder" ? Rotation.DOUBLEROTATION : Rotation.SINGLEROTATION;
             }
             break;
     }
