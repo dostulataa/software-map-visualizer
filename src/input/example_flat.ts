@@ -8,58 +8,58 @@ export default {
 			"attributes": {},
 			"children": [
                 {
-                    "name": "6",
+                    "name": "eins",
 					"type": "File",
 					"attributes": {
-                        "rloc": 6
+                        "rloc": 600
 					},
 					"link": "http://www.google.de"
                 },
                 {
-                    "name": "4",
+                    "name": "zwei",
 					"type": "File",
 					"attributes": {
-                        "rloc": 4
+                        "rloc": 400
 					},
 					"link": "http://www.google.de"
                 },
                 {
-                    "name": "2",
+                    "name": "drei",
                     "type": "File",
                     "attributes": {
-                        "rloc": 2
+                        "rloc": 200
                     },
                     "link": "http://www.google.de"
                 },
                 {
-                    "name": "6",
+                    "name": "vier",
                     "type": "File",
                     "attributes": {
-                        "rloc": 6
+                        "rloc": 60
                     },
                     "link": "http://www.google.de"
                 },
                 {
-                    "name": "2",
+                    "name": "fuenf",
                     "type": "File",
                     "attributes": {
-                        "rloc": 2
+                        "rloc": 200
                     },
                     "link": "http://www.google.de"
                 },
                 {
-                    "name": "3",
+                    "name": "sechs",
 					"type": "File",
 					"attributes": {
-						"rloc": 3
+						"rloc": 300
 					},
 					"link": "http://www.google.de"
                 },
                 {
-					"name": "1",
+					"name": "sieben",
 					"type": "File",
 					"attributes": {
-						"rloc": 1
+						"rloc": 100
 					},
 					"link": "http://www.google.de"
 				},

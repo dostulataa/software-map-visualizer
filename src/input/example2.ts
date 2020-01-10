@@ -48,88 +48,11 @@ export default {
                         },
                         {
                             "name": "fourthNodesSecondChild",
-                            "type": "Folder",
+                            "type": "File",
                             "attributes": {
                                 "rloc": 300
                             },
-                            "children": [
-                                {
-                                    "name": "extraChild1",
-                                    "type": "File",
-                                    "attributes": {
-                                        "rloc": 100
-                                    },
-                                    "link": "http://www.google.de"
-                                },
-                                {
-                                    "name": "extraChild2",
-                                    "type": "Folder",
-                                    "attributes": {
-                                        "rloc": 140
-                                    },
-                                    "children": [
-                                        {
-                                            "name": "extraextraChild1",
-                                            "type": "File",
-                                            "attributes": {
-                                                "rloc": 80
-                                            },
-                                            "link": "http://www.google.de"
-                                        },
-                                        {
-                                            "name": "extraextraChild2",
-                                            "type": "Folder",
-                                            "attributes": {
-                                                "rloc": 40
-                                            },
-                                            "children": [
-                                                {
-                                                    "name": "extraextraChild1",
-                                                    "type": "File",
-                                                    "attributes": {
-                                                        "rloc": 20
-                                                    },
-                                                    "link": "http://www.google.de"
-                                                },
-                                                {
-                                                    "name": "extraextraChild1",
-                                                    "type": "File",
-                                                    "attributes": {
-                                                        "rloc": 10
-                                                    },
-                                                    "link": "http://www.google.de"
-                                                },
-                                                {
-                                                    "name": "extraextraChild1",
-                                                    "type": "File",
-                                                    "attributes": {
-                                                        "rloc": 10
-                                                    },
-                                                    "link": "http://www.google.de"
-                                                },
-                                            ],
-                                            "link": "http://www.google.de"
-                                        },
-                                        {
-                                            "name": "extraextraChild3",
-                                            "type": "File",
-                                            "attributes": {
-                                                "rloc": 20
-                                            },
-                                            "link": "http://www.google.de"
-                                        },
-                                    ],
-                                    "link": "http://www.google.de"
-                                },
-                                {
-                                    "name": "extraChild3",
-                                    "type": "File",
-                                    "attributes": {
-                                        "rloc": 60
-                                    },
-                                    "link": "http://www.google.de"
-                                }
-                            ],
+                            "children": [],
                             "link": "http://www.google.de"
                         },
                         {
