@@ -198,7 +198,6 @@ function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: num
         if(h !== 0) {
             nodeW = nodeW / h;
         }
-        console.log(nodeW)
         if (rect.isVertical()) {
             // if rectangle is vertical, row is layed out horizontally
             const newRect: Rectangle = new Rectangle([x, y], [x + nodeW, y + h]);
