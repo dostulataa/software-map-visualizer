@@ -28,7 +28,6 @@ createTreemap(projects[0], streetMap, metric, 1, "oldVersion");
  * Creates the Treemap using d3 for drawing
  * @param project the project that should be visualized
  * @param algorithm the treemap algorithm to be used
- * @param canvas the canvas where a treemap is drawn on
  * @param metric the metric to determine a nodes size
  * @param leafMargin margin for leaf nodes to make underlying nodes visible
  * @param versionId id of the version column
