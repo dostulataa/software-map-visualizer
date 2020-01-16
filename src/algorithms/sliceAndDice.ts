@@ -25,11 +25,9 @@ export default function sliceAndDice(nodes: CCNode[], canvas: Rectangle, metric:
  * The actual algorithm function that creates the Treemap
  * 
  * @param root root node of the project
+ * @param tlX rectangle's top left point
+ * @param tlY rectangle's bottom right point
  * @param axis axis of current recursion level. Changes between 0 and 1
- * @param tlX X Coordinate of the rectangle's topLeft pointer
- * @param tlY Y Coordinate of the rectangle's topLeft pointer
- * @param brX X Coordinate of the rectangle's bottomRight pointer
- * @param brY Y Coordinate of the rectangle's bottomRight pointer
  * @param metric metric by which Treemap nodes are scaled
  */
 function treemap(root: CCNode, topLeft: [number, number], bottomRight: [number, number], axis: number, metric: string) {
@@ -51,6 +49,10 @@ function treemap(root: CCNode, topLeft: [number, number], bottomRight: [number, 
     }
 }
 
+/**
+ * Returns color depending on file's type
+ * @param node current node being colorized
+ */
 function colorize(node: CCNode): string {
     return node.type === "File" ? "LightSteelBlue" : "SteelBlue";
 }

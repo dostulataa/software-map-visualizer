@@ -184,8 +184,8 @@ function remainingRect(row: CCNode[], rect: Rectangle, metric: string, rootSize:
  * Lays out new row and returns the newly created rectangles
  * 
  * @param row the row of nodes to be layed out
- * @param metric metric by which rectangle area is determined
  * @param rect rectangle in which the row should be placed
+ * @param metric metric by which rectangle area is determined
  * @param rootSize metric size of the rectangle
  */
 function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: number) {
@@ -221,6 +221,10 @@ function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: num
     return rects;
 }
 
+/**
+ * Returns color depending on file's type
+ * @param node current node being colorized
+ */
 function colorize(node: CCNode): string {
     return node.type === "File" ? "lightsteelblue" : "SteelBlue";
 }
