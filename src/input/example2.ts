@@ -46,13 +46,42 @@ export default {
                             },
                             "link": "http://www.google.de"
                         },
+
                         {
                             "name": "fourthNodesSecondChild",
-                            "type": "File",
+                            "type": "Folder",
                             "attributes": {
                                 "rloc": 300
                             },
-                            "children": [],
+                            "children": [
+                                {
+                                    "name": "file1",
+                                    "type": "File",
+                                    "attributes": {
+                                        "rloc": 120
+                                    },
+                                    "children": [],
+                                    "link": "http://www.google.de"
+                                },
+                                {
+                                    "name": "file2",
+                                    "type": "File",
+                                    "attributes": {
+                                        "rloc": 100
+                                    },
+                                    "children": [],
+                                    "link": "http://www.google.de"
+                                },
+                                {
+                                    "name": "file3",
+                                    "type": "File",
+                                    "attributes": {
+                                        "rloc": 80
+                                    },
+                                    "children": [],
+                                    "link": "http://www.google.de"
+                                }
+                            ],
                             "link": "http://www.google.de"
                         },
                         {

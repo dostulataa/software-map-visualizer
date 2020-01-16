@@ -1,25 +1,27 @@
 import validateInputFiles from "./Validation";
 import Rectangle from "./models/visualization/Rectangle";
-import TreemapNode from "./models/visualization/VisualizationNode";
+import VisualizationNode from "./models/visualization/VisualizationNode";
 import CCProject from "./models/codeCharta/CCProject";
-import junit2018 from "./input/junit5_2018-10-27.cc";
+import junit2018 from "./input/codeCharta";
 import junit2019 from "./input/junit5_2019-10-26.cc";
 import schema from "./schema";
 import { select, event } from "d3-selection";
 import squarify from "./algorithms/squarified";
-import cityMap from "./algorithms/cityMap";
+import Point from "./models/visualization/Point";
+// import sliceAndDice from "./algorithms/sliceAndDice";
+import streetMap from "./algorithms/streetMap";
 
 const inputFiles = [junit2018, junit2019];
 validateInputFiles(schema, inputFiles); // Checks for input data validity with schema
 
-const treemapWidth = 600;
-const treemapHeight = 400;
+let svgWidth = 600;
+let svgHeight = 400;
 const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
 const metric = "rloc";
 
-// createTreemap(projects[0], squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, "oldVersion");
-// createTreemap(projects[1], squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, "newVersion");
-createTreemap(projects[0], cityMap, new Rectangle([0, 0], [treemapWidth, treemapHeight]), metric, 1, "oldVersion");
+// createTreemap(projects[0], squarify, metric, 1, "oldVersion");
+// createTreemap(projects[1], sliceAndDice, metric, 1, "newVersion");
+createTreemap(projects[0], streetMap, metric, 1, "oldVersion");
 
 
 /**
@@ -31,8 +33,16 @@ createTreemap(projects[0], cityMap, new Rectangle([0, 0], [treemapWidth, treemap
  * @param leafMargin margin for leaf nodes to make underlying nodes visible
  * @param versionId id of the version column
  */
-function createTreemap(project: CCProject, algorithm: Function, canvas: Rectangle, metric: string, leafMargin: number, versionId: string) {
-    let nodes: TreemapNode[] = algorithm(project.nodes, canvas, metric);
+function createTreemap(project: CCProject, algorithm: Function, metric: string, leafMargin: number, versionId: string) {
+    let nodes: VisualizationNode[] = [];
+    if(algorithm === streetMap) {
+        const street = algorithm(project.nodes[0], metric);
+        svgWidth = street.width;
+        svgHeight = street.height
+        nodes = street.draw(new Point(0, 0));
+    } else {
+        nodes = algorithm(project.nodes, new Rectangle(new Point(0, 0), svgWidth, svgHeight), metric);
+    }
 
     const codeVersion = select(`#${versionId}`);
 
@@ -40,20 +50,20 @@ function createTreemap(project: CCProject, algorithm: Function, canvas: Rectangl
 
     const svg = codeVersion.select(".treemap")
         .append("svg")
-        .attr("width", canvas.width())
-        .attr("height", canvas.height());
+        .attr("width", svgWidth)
+        .attr("height", svgHeight);
 
     svg.selectAll("rect")
         .data(nodes)
         .enter()
         .append('rect')
         .attr("class", "treemapNode")
-        .attr("id", (d: TreemapNode): string => { return versionId + "-" + d.node.name.replace(".", "-") })
-        .attr("x", (d: TreemapNode): number => { return d.rectangle.posX() + (isFile(d) ? leafMargin : 0) })
-        .attr("y", (d: TreemapNode): number => { return d.rectangle.posY() + (isFile(d) ? leafMargin : 0) })
-        .attr("height", (d: TreemapNode): number => { return d.rectangle.height() - (isFile(d) && d.rectangle.height() > 2 * leafMargin ? 2 * leafMargin : 0) })
-        .attr("width", (d: TreemapNode): number => { return d.rectangle.width() - (isFile(d) && d.rectangle.width() > 2 * leafMargin ? 2 * leafMargin : 0) })
-        .style("fill", (d: TreemapNode): string => { return d.color })
+        .attr("id", (d: VisualizationNode): string => { return versionId + "-" + d.node.name.replace(".", "-") })
+        .attr("x", (d: VisualizationNode): number => { return d.rectangle.topLeft.x + (isFile(d) ? leafMargin : 0) })
+        .attr("y", (d: VisualizationNode): number => { return d.rectangle.topLeft.y + (isFile(d) ? leafMargin : 0) })
+        .attr("height", (d: VisualizationNode): number => { return d.rectangle.height - (isFile(d) && d.rectangle.height > 2 * leafMargin ? 2 * leafMargin : 0) })
+        .attr("width", (d: VisualizationNode): number => { return d.rectangle.width - (isFile(d) && d.rectangle.width > 2 * leafMargin ? 2 * leafMargin : 0) })
+        .style("fill", (d: VisualizationNode): string => { return d.color })
         .on("mouseover", handleMouseover)
         .on("mouseout", handleMouseout)
         .on("click", createAttributeList);
@@ -64,7 +74,7 @@ function createTreemap(project: CCProject, algorithm: Function, canvas: Rectangl
  * 
  * @param treemapNode treemap node which event is registered on 
  */
-function handleMouseover(treemapNode: TreemapNode) {
+function handleMouseover(treemapNode: VisualizationNode) {
     let color = "lightgrey";
     select(event.currentTarget).style("fill", color);
     const codeVersion = select(event.currentTarget.closest(".codeVersion"));
@@ -77,7 +87,7 @@ function handleMouseover(treemapNode: TreemapNode) {
  * 
  * @param treemapNode treemap node which event is registered on 
  */
-function handleMouseout(treemapNode: TreemapNode) {
+function handleMouseout(treemapNode: VisualizationNode) {
     let color = treemapNode.color;
     select(event.currentTarget).style("fill", color);
     const codeVersion = select(event.currentTarget.closest(".codeVersion"));
@@ -110,7 +120,7 @@ function colorizeOtherNode(codeVersionId: string, nodeId: string, color: string)
  * 
  * @param treemapNode the selected treemapNode
  */
-function createAttributeList(treemapNode: TreemapNode) {
+function createAttributeList(treemapNode: VisualizationNode) {
     const codeVersion = select(event.currentTarget.closest(".codeVersion"));
     const attributeList = codeVersion.select(".attributes");
     if (!attributeList.select("table").empty()) {
@@ -134,7 +144,7 @@ function createAttributeList(treemapNode: TreemapNode) {
             codeVersion.select("svg").remove();
             let versionId = codeVersion.attr("id");
             let project = versionId === "oldVersion" ? projects[0] : projects[1];
-            createTreemap(project, squarify, new Rectangle([0, 0], [treemapWidth, treemapHeight]), event.currentTarget.textContent, 1, codeVersion.attr("id"));
+            createTreemap(project, squarify, metric, 1, codeVersion.attr("id"));
         });
         row.append("td").text(String(value));
     });
@@ -145,6 +155,6 @@ function createAttributeList(treemapNode: TreemapNode) {
  * 
  * @param treemapNode treemap node to be checked
  */
-function isFile(treemapNode: TreemapNode): boolean {
+function isFile(treemapNode: VisualizationNode): boolean {
     return treemapNode.node.type === "File";
 }
