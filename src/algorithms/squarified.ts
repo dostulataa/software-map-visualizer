@@ -1,6 +1,7 @@
 import Rectangle from "../models/visualization/Rectangle";
 import TreemapNode from "../models/visualization/VisualizationNode";
 import CCNode from "../models/codeCharta/CCNode";
+import Point from "../models/visualization/Point";
 
 let treemapNodes: TreemapNode[] = [];
 
@@ -35,7 +36,7 @@ export default function squarify(nodes: CCNode[], canvas: Rectangle, metric: str
  */
 function treemap(children: CCNode[], rect: Rectangle, metric: string, rootSize: number) {
     let processed = 0;
-    let currentRect = new Rectangle([rect.topLeft[0], rect.topLeft[1]], [rect.bottomRight[0], rect.bottomRight[1]]);
+    let currentRect = new Rectangle(rect.topLeft, rect.width, rect.height);
     let currentRootSize = rootSize;
 
     do {
@@ -97,7 +98,7 @@ function worst(row: CCNode[], rect: Rectangle, metric: string, rootSize: number)
  * @param rect rectangle of the parent node
  */
 function scale(size: number, rootSize: number, rect: Rectangle): number {
-    const scale = rect.width() * rect.height() / rootSize;
+    const scale = rect.width * rect.height / rootSize;
     return scale * size;
 }
 
@@ -169,9 +170,11 @@ function remainingRect(row: CCNode[], rect: Rectangle, metric: string, rootSize:
     const h: number = totSize / w;
     let newRect: Rectangle;
     if (rect.isVertical()) {
-        newRect = new Rectangle([rect.topLeft[0], rect.topLeft[1] + h], [rect.bottomRight[0], rect.bottomRight[1]]);
+        newRect = new Rectangle(new Point(rect.topLeft.x, rect.topLeft.y + h), rect.width, rect.height - h);
+        // newRect = new Rectangle([rect.topLeft[0], rect.topLeft[1] + h], [rect.bottomRight[0], rect.bottomRight[1]]);
     } else {
-        newRect = new Rectangle([rect.topLeft[0] + h, rect.topLeft[1]], [rect.bottomRight[0], rect.bottomRight[1]]);
+        newRect = new Rectangle(new Point(rect.topLeft.x + h, rect.topLeft.y), rect.width - h, rect.height);
+        // newRect = new Rectangle([rect.topLeft[0] + h, rect.topLeft[1]], [rect.bottomRight[0], rect.bottomRight[1]]);
     }
     return newRect;
 }
@@ -189,8 +192,8 @@ function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: num
     const rowSize: number = scale(totalSize(row, metric), rootSize, rect);
     const w = rect.shorterSide() > 0 ? rect.shorterSide() : 1; // row width (side of the rect on which nodes are to be laid out)
     const h: number = rowSize / w; // row height
-    let x: number = rect.posX();
-    let y: number = rect.posY();
+    let x: number = rect.topLeft.x;
+    let y: number = rect.topLeft.y;
     const rects: Rectangle[] = [];
 
     for (const node of row) {
@@ -199,14 +202,16 @@ function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: num
             nodeW = nodeW / h;
         }
         if (rect.isVertical()) {
-            // if rectangle is vertical, row is layed out horizontally
-            const newRect: Rectangle = new Rectangle([x, y], [x + nodeW, y + h]);
+            //Row is layed out horizontally
+            const newRect = new Rectangle(new Point(x, y), nodeW, h);
+            // const newRect: Rectangle = new Rectangle([x, y], [x + nodeW, y + h]);
             treemapNodes.push(new TreemapNode(newRect, node, colorize(node)));
             rects.push(newRect);
             x += nodeW;
         } else {
-            // if rectangle is horizontal, row is layed out vertically
-            const newRect: Rectangle = new Rectangle([x, y], [x + h, y + nodeW]);
+            // Row is layed out vertically
+            const newRect = new Rectangle(new Point(x, y), h, nodeW);
+            // const newRect: Rectangle = new Rectangle([x, y], [x + h, y + nodeW]);
             treemapNodes.push(new TreemapNode(newRect, node, colorize(node)));
             rects.push(newRect);
             y += nodeW;
