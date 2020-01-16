@@ -41,6 +41,13 @@ export default class CCNode {
      * @param data json data to create a Node from
      */
     public static create(data: any): CCNode {
+        let name = data.name;
+        //skip folders with only one folder child and concat names
+        while(data.children.length === 1 && data.children[0].type === "Folder") {
+            name += "." + data.children[0].name;
+            data = data.children[0];
+        }
+
         const attributes: Map<string, number> = new Map();
         for (const key of Object.keys(data.attributes)) {
             attributes.set(key, Number(data.attributes[key]));
@@ -64,6 +71,6 @@ export default class CCNode {
             link = data.link;
         }
 
-        return new CCNode(data.name, data.type, attributes, children, id, link);
+        return new CCNode(name, data.type, attributes, children, id, link);
     }
 }
