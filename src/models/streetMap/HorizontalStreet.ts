@@ -3,14 +3,18 @@ import CCNode from "../codeCharta/CCNode";
 import Point from "../visualization/Point";
 import Rectangle from "../visualization/Rectangle";
 import VisualizationNode from "../visualization/VisualizationNode";
+import VerticalStreet from "./VerticalStreet";
+import UpStreet from "./UpStreet";
+import DownStreet from "./DownStreet";
 
 export default class HorizontalStreet extends Box {
 
-    private children: Box[] = [];
-    private topRow: Box[] = [];
-    private bottomRow: Box[] = [];
-    private STREET_HEIGHT = 5;
-    private COLOR = "SteelBlue";
+    protected children: Box[] = [];
+    protected topRow: Box[] = [];
+    protected bottomRow: Box[] = [];
+    protected STREET_HEIGHT = 5;
+    protected COLOR = "SteelBlue";
+    protected SPACER = 2;
 
     constructor(node: CCNode, children: Box[]) {
         super(node);
@@ -27,8 +31,8 @@ export default class HorizontalStreet extends Box {
         this.setRows(this.children);
 
         //Set width and hight of box
-        this.height = this.getMaxHeight(this.topRow) + this.STREET_HEIGHT + this.getMaxHeight(this.bottomRow);
-        this.width = Math.max(this.getLength(this.topRow), this.getLength(this.bottomRow));
+        this.height = this.getMaxHeight(this.topRow) + this.STREET_HEIGHT + this.getMaxHeight(this.bottomRow) + 2 * this.SPACER;
+        this.width = Math.max(this.getLength(this.topRow), this.getLength(this.bottomRow)) + this.SPACER;
     }
 
     public draw(origin: Point): VisualizationNode[] {
@@ -55,7 +59,7 @@ export default class HorizontalStreet extends Box {
      * Gets total length of the street.
      * @param boxes placed boxes
      */
-    private getLength(boxes: Box[]): number {
+    protected getLength(boxes: Box[]): number {
         return this.getLengthUntil(boxes, boxes.length);
     }
 
@@ -64,7 +68,7 @@ export default class HorizontalStreet extends Box {
      * @param boxes placed boxes
      * @param end end index
      */
-    private getLengthUntil(boxes: Box[], end: number): number {
+    protected getLengthUntil(boxes: Box[], end: number): number {
         let sum: number = 0;
         for (let i = 0; i < end; i++) {
             sum += boxes[i].width;
@@ -76,15 +80,21 @@ export default class HorizontalStreet extends Box {
      * Divides children nodes into top- and bottomrow
      * @param children children of the current node
      */
-    private setRows(children: Box[]) {
+    protected setRows(children: Box[]) {
         const totalLength = this.getLength(children);
         let sum = 0;
 
         for(let i = 0; i < children.length; i++) {
             if(sum < totalLength / 2) {
+                if(children[i] instanceof VerticalStreet) {
+                    children[i] = <UpStreet>children[i];
+                }
                 this.topRow.push(children[i]);
                 sum += children[i].width;
             } else {
+                if(children[i] instanceof VerticalStreet) {
+                    children[i] = <DownStreet>children[i];
+                }
                 this.bottomRow.push(children[i]);
             }
         }
@@ -94,7 +104,7 @@ export default class HorizontalStreet extends Box {
      * Gets the highest box of an array of boxes.
      * @param boxes boxes to be checked
      */
-    private getMaxHeight(boxes: Box[]): number {
+    protected getMaxHeight(boxes: Box[]): number {
         return boxes.reduce((max, n) => Math.max(max, n.height), Number.MIN_VALUE);
     }
 }
