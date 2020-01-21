@@ -12,7 +12,8 @@ export default {
 					"type": "File",
 					"attributes": {
                         "rloc": 600
-					},
+                    },
+                    "children": [],
 					"link": "http://www.google.de"
                 },
                 {
@@ -21,6 +22,7 @@ export default {
 					"attributes": {
                         "rloc": 400
 					},
+                    "children": [],
 					"link": "http://www.google.de"
                 },
                 {
@@ -29,6 +31,7 @@ export default {
                     "attributes": {
                         "rloc": 200
                     },
+                    "children": [],
                     "link": "http://www.google.de"
                 },
                 {
@@ -37,6 +40,7 @@ export default {
                     "attributes": {
                         "rloc": 60
                     },
+                    "children": [],
                     "link": "http://www.google.de"
                 },
                 {
@@ -45,6 +49,7 @@ export default {
                     "attributes": {
                         "rloc": 200
                     },
+                    "children": [],
                     "link": "http://www.google.de"
                 },
                 {
@@ -53,6 +58,7 @@ export default {
 					"attributes": {
 						"rloc": 300
 					},
+                    "children": [],
 					"link": "http://www.google.de"
                 },
                 {
@@ -61,6 +67,7 @@ export default {
 					"attributes": {
 						"rloc": 100
 					},
+                    "children": [],
 					"link": "http://www.google.de"
 				},
 			]
