@@ -97,6 +97,4 @@ export default class HorizontalStreet extends Box {
     private getMaxHeight(boxes: Box[]): number {
         return boxes.reduce((max, n) => Math.max(max, n.height), Number.MIN_VALUE);
     }
-
-
 }
