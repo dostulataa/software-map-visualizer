@@ -1,22 +1,17 @@
-import Box from "./Box";
 import CCNode from "../codeCharta/CCNode";
 import Point from "../visualization/Point";
 import Rectangle from "../visualization/Rectangle";
-import VisualizationNode from "../visualization/VisualizationNode";
+import VisualNode from "../visualization/VisualNode";
+import Box, { Colors } from "./Box";
 import VerticalStreet, { VerticalOrientation } from "./VerticalStreet";
 
 export enum HorizontalOrientation { RIGHT, LEFT }
 
-// REVIEW: die Klasse ähnelt sehr der VerticalStreet. Kann man eine allgemeine Klasse
-// bilden? Vielleicht mit leftSide und rightSide? je nach Standpunkt wäre es dann
-// left/right.
 export default class HorizontalStreet extends Box {
-
     private children: Box[] = [];
     private topRow: Box[] = [];
     private bottomRow: Box[] = [];
     private STREET_HEIGHT = 5;
-    private COLOR = "SteelBlue";
     private SPACER = 2;
     public orientation: HorizontalOrientation;
 
@@ -26,48 +21,89 @@ export default class HorizontalStreet extends Box {
         this.orientation = orientation;
     }
 
-    public layout(metric: string): void {
-        //Layout all children
+    public calculateDimension(metric: string): void {
+        //Calculate dimensions of all children
         for (const child of this.children) {
-            child.layout(metric);
+            child.calculateDimension(metric);
         }
 
-        //Divide children in topRow and bottomRow
-        this.setRows(this.children);
-
-        if(this.orientation === HorizontalOrientation.RIGHT) {
-            this.bottomRow = this.bottomRow.reverse();
-        } else {
-            this.topRow = this.topRow.reverse();
-        }
+        this.splitChildrenToRows(this.children);
+        this.rearrangeRows();
 
         //Set width and hight of box
         this.width = Math.max(this.getLength(this.topRow), this.getLength(this.bottomRow));
         this.height = this.getMaxHeight(this.topRow) + this.STREET_HEIGHT + this.getMaxHeight(this.bottomRow) + 2 * this.SPACER;
     }
 
-    public draw(origin: Point): VisualizationNode[] {
+    public layout(origin: Point): VisualNode[] {
         const maxTopHeight = this.getMaxHeight(this.topRow);
-        const bottomStart = origin.y + maxTopHeight + this.STREET_HEIGHT;
-        let nodes: VisualizationNode[] = [];
-        //nodes.push(new VisualizationNode(new Rectangle(origin, this.width, this.height), this.node, "grey"));
+        const topRowNodes = this.layoutTopRow(origin, maxTopHeight);
+        const streetNode = this.layoutStreet(origin, maxTopHeight);
+        const bottomRowNodes = this.layoutBottomRow(origin, maxTopHeight);
+        return [...topRowNodes, streetNode, ...bottomRowNodes];
+    }
 
-        //Draw topRow
+    /**
+     * Creates the layout for the topRow.
+     * @param origin origin of local coordinate system
+     * @param maxTopHeight highest node in top row
+     */
+    private layoutTopRow(origin: Point, maxTopHeight: number): VisualNode[] {
+        const nodes: VisualNode[] = [];
         for (let i = 0; i < this.topRow.length; i++) {
-            nodes.push.apply(nodes, this.topRow[i].draw(new Point(origin.x + this.getLengthUntil(this.topRow, i), origin.y + this.SPACER + (maxTopHeight - this.topRow[i].height))));
+            const childOriginX = this.calculateChildOriginX(origin, i, this.topRow)
+            const childOriginY = this.calculateStreetOffsetY(origin, maxTopHeight) - this.topRow[i].height;
+            const childOrigin = new Point(childOriginX, childOriginY);
+            nodes.push.apply(nodes, this.topRow[i].layout(childOrigin));
         }
-
-        // REVIEW: jedes mal wenn man einen Kommentar schreibt, könnte man eine
-        // Funktion extrahieren, deren Name den Kommentar enthält.
-        //Draw street
-        nodes.push(new VisualizationNode(new Rectangle(new Point(origin.x, origin.y + maxTopHeight + this.SPACER), this.width, this.STREET_HEIGHT), this.node, this.COLOR));
-
-        //Draw bottomRow
-        for (let i = 0; i < this.bottomRow.length; i++) {
-            nodes.push.apply(nodes, this.bottomRow[i].draw(new Point(origin.x + this.getLengthUntil(this.bottomRow, i), bottomStart + this.SPACER)));
-        }
-        
         return nodes;
+    }
+
+    /**
+     * Creates the layout for the street node.
+     * @param origin origin of local coordinate system
+     * @param maxTopHeight highest node in top row
+     */
+    private layoutStreet(origin: Point, maxTopHeight: number): VisualNode {
+        const streetOffsetY = this.calculateStreetOffsetY(origin, maxTopHeight);
+        const streetOrigin = new Point(origin.x, streetOffsetY);
+        const streetRectangle = new Rectangle(streetOrigin, this.width, this.STREET_HEIGHT)
+        return new VisualNode(streetRectangle, this.node, Colors.StreetColor);
+    }
+
+    /**
+     * Creates the layout for the bottomRow.
+     * @param origin origin of local coordinate system
+     * @param maxTopHeight highest node in top row
+     */
+    private layoutBottomRow(origin: Point, maxTopHeight: number): VisualNode[] {
+        const nodes: VisualNode[] = [];
+        for (let i = 0; i < this.bottomRow.length; i++) {
+            const childOriginX = this.calculateChildOriginX(origin, i, this.bottomRow);
+            const childOriginY = this.calculateStreetOffsetY(origin, maxTopHeight) + this.STREET_HEIGHT;
+            const childOrigin = new Point(childOriginX, childOriginY)
+            nodes.push.apply(nodes, this.bottomRow[i].layout(childOrigin));
+        }
+        return nodes;
+    }
+
+    /**
+     * Calculates x-coordinate of current child
+     * @param origin origin of local coordinate system
+     * @param index index in row of current node
+     * @param row the node's row
+     */
+    private calculateChildOriginX(origin: Point, index: number, row: Box[]) {
+        return origin.x + this.getLengthUntil(row, index);
+    }
+
+    /**
+     * Calculates y-coordinate of street.
+     * @param origin origin of local coordinate system
+     * @param maxLeftWidth highest node in topRow
+     */
+    private calculateStreetOffsetY(origin: Point, maxTopHeight: number): number {
+        return origin.y + this.SPACER + maxTopHeight;
     }
 
     /**
@@ -95,9 +131,7 @@ export default class HorizontalStreet extends Box {
      * Divides children nodes into top- and bottomrow
      * @param children children of the current node
      */
-    // REVIEW: setRows ist recht allgemein. Ich würde die Funktion so benennen
-    // wie in der Beschreibung: spreadChildrenToStreetSides
-    private setRows(children: Box[]) {
+    private splitChildrenToRows(children: Box[]) {
         const totalLength = this.getLength(children);
         let sum = 0;
 
@@ -111,6 +145,17 @@ export default class HorizontalStreet extends Box {
                 }
                 this.bottomRow.push(children[i]);
             }
+        }
+    }
+
+    /**
+     * Arranges rows according to their orientation
+     */
+    private rearrangeRows() {
+        if (this.orientation === HorizontalOrientation.RIGHT) {
+            this.bottomRow = this.bottomRow.reverse();
+        } else {
+            this.topRow = this.topRow.reverse();
         }
     }
 

@@ -1,25 +1,23 @@
-import Box from "./Box";
+import Box, { Colors } from "./Box";
 import CCNode from "../codeCharta/CCNode"
 import Point from "../visualization/Point";
 import Rectangle from "../visualization/Rectangle";
-import VisualizationNode from "../visualization/VisualizationNode";
+import VisualNode from "../visualization/VisualNode";
 
 export default class House extends Box {
-
-    private COLOR = "LightSteelBlue";
 
     constructor(node: CCNode) {
         super(node);
     }
 
-    public layout(metric: string): void {
+    public calculateDimension(metric: string): void {
         const size = this.node.size(metric);
-        this.height = Math.sqrt(size);
         this.width = Math.sqrt(size);
+        this.height = Math.sqrt(size);
     }
 
-    public draw(origin: Point): VisualizationNode[] {
-        const newNode = new VisualizationNode(new Rectangle(new Point(origin.x, origin.y), this.width, this.height), this.node, this.COLOR);
+    public layout(origin: Point): VisualNode[] {
+        const newNode = new VisualNode(new Rectangle(new Point(origin.x, origin.y), this.width, this.height), this.node, Colors.HouseColor);
         return [newNode];
     }
 }

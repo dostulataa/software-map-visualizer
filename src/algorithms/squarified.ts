@@ -1,5 +1,5 @@
 import Rectangle from "../models/visualization/Rectangle";
-import TreemapNode from "../models/visualization/VisualizationNode";
+import TreemapNode from "../models/visualization/VisualNode";
 import CCNode from "../models/codeCharta/CCNode";
 import Point from "../models/visualization/Point";
 

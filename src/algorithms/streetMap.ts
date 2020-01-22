@@ -4,6 +4,8 @@ import House from "../models/streetMap/House";
 import VerticalStreet from "../models/streetMap/VerticalStreet";
 import Box from "../models/streetMap/Box";
 
+enum StreetOrientation { Horizontal, Vertical };
+
 /**
  * Initializes a new horizontal street and calls its layout function.
  * @param root root node of the project
@@ -12,28 +14,24 @@ import Box from "../models/streetMap/Box";
 export default function init(root: CCNode, metric: string): HorizontalStreet {
     const boxes = createBoxes(root, 0);
     const street = new HorizontalStreet(root, boxes);
-    street.COLOR = 'gray'
-    street.layout(metric);
+    street.calculateDimension(metric);
     return street;
 }
 
 /**
  * Creates boxes for a street.
  * @param node current to create a box for
- * @param streetOrientation a child's street orientation: 0 for vertical, 1 for horizontal
+ * @param streetOrientation a child's street orientation
  */
-// REVIEW: Ich würde für streetOrientation enum verwenden.
-// Dann entfällt die Codierung und es ist leicht ersichtlich was die Werte bedeuten.
-function createBoxes(node: CCNode, streetOrientation: number): Box[] {
-    let children: Box[] = [];
+function createBoxes(node: CCNode, orientation: StreetOrientation): Box[] {
+    const children: Box[] = [];
     for (const child of node.children) {
-        if(child.type === "File") {
+        if (child.type === "File") {
             children.push(new House(child));
         } else {
-            // REVIEW: Diese Zeile würde ich umbrechen. Sie ist zu lang.
-            children.push(streetOrientation === 0
-                ? new VerticalStreet(child, createBoxes(child, 1 - streetOrientation))
-                : new HorizontalStreet(child, createBoxes(child, 1 - streetOrientation)));
+            children.push(orientation === StreetOrientation.Horizontal
+                ? new VerticalStreet(child, createBoxes(child, 1 - orientation))
+                : new HorizontalStreet(child, createBoxes(child, 1 - orientation)));
         }
     }
     return children;

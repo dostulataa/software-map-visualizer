@@ -1,8 +1,8 @@
-import Box from "./Box";
+import Box, { Colors } from "./Box";
 import CCNode from "../codeCharta/CCNode";
 import Rectangle from "../visualization/Rectangle";
 import Point from "../visualization/Point";
-import VisualizationNode from "../visualization/VisualizationNode";
+import VisualNode from "../visualization/VisualNode";
 import HorizontalStreet, { HorizontalOrientation } from "./HorizontalStreet";
 
 export enum VerticalOrientation { UP, DOWN };
@@ -12,7 +12,6 @@ export default class VerticalStreet extends Box {
     private leftRow: Box[] = [];
     private rightRow: Box[] = [];
     private STREET_WIDTH = 5;
-    private COLOR = "SteelBlue";
     private SPACER = 2;
     public orientation: VerticalOrientation;
 
@@ -22,46 +21,89 @@ export default class VerticalStreet extends Box {
         this.orientation = orientation;
     }
 
-    public layout(metric: string): void {
-        //Layout all children
+    public calculateDimension(metric: string): void {
+        //Calculate dimensions of all children
         for (const child of this.children) {
-            child.layout(metric);
+            child.calculateDimension(metric);
         }
 
-        //Divide children in leftRow and rightRow
-        this.setRows(this.children);
-
-        if (this.orientation === VerticalOrientation.UP) {
-            this.leftRow = this.leftRow.reverse();
-        } else {
-            this.rightRow = this.rightRow.reverse();
-        }
+        this.splitChildrenToRows(this.children);
+        this.rearrangeRows();
 
         //Set width and height of box
         this.width = this.getMaxWidth(this.leftRow) + this.STREET_WIDTH + this.getMaxWidth(this.rightRow) + 2 * this.SPACER;
         this.height = Math.max(this.getLength(this.leftRow), this.getLength(this.rightRow));
     }
 
-    public draw(origin: Point): VisualizationNode[] {
+    public layout(origin: Point): VisualNode[] {
         const maxLeftWidth = this.getMaxWidth(this.leftRow);
-        const rightStart = origin.x + maxLeftWidth + this.STREET_WIDTH;
-        let nodes: VisualizationNode[] = [];
-        //nodes.push(new VisualizationNode(new Rectangle(origin, this.width, this.height), this.node, "grey"));
+        const leftRowNodes = this.layoutLeftRow(origin, maxLeftWidth);
+        const streetNode = this.layoutStreet(origin, maxLeftWidth);
+        const rightRowNodes = this.layoutRightRow(origin, maxLeftWidth);
+        return [...leftRowNodes, streetNode, ...rightRowNodes];
+    }
 
-        //Draw leftRow
+    /**
+     * Creates the layout for the leftRow.
+     * @param origin origin of local coordinate system
+     * @param maxLeftWidth widest node in leftRow
+     */
+    private layoutLeftRow(origin: Point, maxLeftWidth: number): VisualNode[] {
+        const nodes: VisualNode[] = [];
         for (let i = 0; i < this.leftRow.length; i++) {
-            nodes.push.apply(nodes, this.leftRow[i].draw(new Point(origin.x + this.SPACER + (maxLeftWidth - this.leftRow[i].width), origin.y + this.getLengthUntil(this.leftRow, i))));
+            const childOriginX = this.calculateStreetOffsetX(origin, maxLeftWidth) - this.leftRow[i].width;
+            const childOriginY = this.calculateChildOriginY(origin, i, this.leftRow);
+            const childOrigin = new Point(childOriginX, childOriginY);
+            nodes.push.apply(nodes, this.leftRow[i].layout(childOrigin));
         }
-
-        //Draw street
-        nodes.push(new VisualizationNode(new Rectangle(new Point(origin.x + this.SPACER + maxLeftWidth, origin.y), this.STREET_WIDTH, this.height), this.node, this.COLOR));
-
-        //Draw rightRow
-        for (let i = 0; i < this.rightRow.length; i++) {
-            nodes.push.apply(nodes, this.rightRow[i].draw(new Point(rightStart + this.SPACER, origin.y + this.getLengthUntil(this.rightRow, i))));
-        }
-
         return nodes;
+    }
+
+    /**
+     * Creates the layout for the street node.
+     * @param origin origin of local coordinate system
+     * @param maxLeftWidth widest node in leftRow
+     */
+    private layoutStreet(origin: Point, maxLeftWidth: number): VisualNode {
+        const streetOffsetX = this.calculateStreetOffsetX(origin, maxLeftWidth);
+        const streetOrigin = new Point(streetOffsetX, origin.y);
+        const streetRectangle = new Rectangle(streetOrigin, this.STREET_WIDTH, this.height);
+        return new VisualNode(streetRectangle, this.node, Colors.StreetColor);
+    }
+
+    /**
+     * Creates the layout for the rightRow.
+     * @param origin origin of local coordinate system
+     * @param maxLeftWidth widest node in leftRow
+     */
+    private layoutRightRow(origin: Point, maxLeftWidth: number): VisualNode[] {
+        const nodes: VisualNode[] = [];
+        for (let i = 0; i < this.rightRow.length; i++) {
+            const childOriginX = this.calculateStreetOffsetX(origin, maxLeftWidth) + this.STREET_WIDTH;
+            const childOriginY = this.calculateChildOriginY(origin, i, this.rightRow);
+            const childOrigin = new Point(childOriginX, childOriginY);
+            nodes.push.apply(nodes, this.rightRow[i].layout(childOrigin));
+        }
+        return nodes;
+    }
+
+    /**
+     * Calculates x-coordinate of street.
+     * @param origin origin of local coordinate system
+     * @param maxLeftWidth widest node in leftRow
+     */
+    private calculateStreetOffsetX(origin: Point, maxLeftWidth: number): number {
+        return origin.x + this.SPACER + maxLeftWidth;
+    }
+
+    /**
+     * Calculates y-coordinate of current child
+     * @param origin origin of local coordinate system
+     * @param index index in row of current node
+     * @param row the node's row
+     */
+    private calculateChildOriginY(origin: Point, index: number, row: Box[]): number {
+        return origin.y + this.getLengthUntil(row, index);
     }
 
     /**
@@ -89,7 +131,7 @@ export default class VerticalStreet extends Box {
      * Divides children nodes into top- and bottomrow
      * @param children children of the current node
      */
-    private setRows(children: Box[]) {
+    private splitChildrenToRows(children: Box[]) {
         const totalLength = this.getLength(children);
         let sum = 0;
 
@@ -103,6 +145,17 @@ export default class VerticalStreet extends Box {
             } else {
                 this.rightRow.push(children[i]);
             }
+        }
+    }
+
+    /**
+     * Arranges rows according to their orientation
+     */
+    private rearrangeRows() {
+        if (this.orientation === VerticalOrientation.UP) {
+            this.leftRow = this.leftRow.reverse();
+        } else {
+            this.rightRow = this.rightRow.reverse();
         }
     }
 

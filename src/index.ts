@@ -1,8 +1,7 @@
 import validateInputFiles from "./Validation";
 import Rectangle from "./models/visualization/Rectangle";
-import VisualizationNode from "./models/visualization/VisualizationNode";
+import VisualNode from "./models/visualization/VisualNode";
 import CCProject from "./models/codeCharta/CCProject";
-// REVIEW: junit2018 -> codeCharta ?
 import junit2018 from "./input/junit5_2018-10-27.cc";
 import junit2019 from "./input/junit5_2019-10-26.cc";
 import schema from "./schema";
@@ -20,9 +19,9 @@ let svgHeight = 400;
 const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
 const metric = "rloc";
 
-createTreemap(projects[0], squarify, metric, 1, "oldVersion");
-createTreemap(projects[1], squarify, metric, 1, "newVersion");
-//createTreemap(projects[1], streetMap, metric, 1, "oldVersion");
+// createTreemap(projects[0], squarify, metric, 1, "oldVersion");
+// createTreemap(projects[1], squarify, metric, 1, "newVersion");
+createVisualization(projects[1], streetMap, metric, 1, "oldVersion");
 
 
 /**
@@ -33,18 +32,15 @@ createTreemap(projects[1], squarify, metric, 1, "newVersion");
  * @param leafMargin margin for leaf nodes to make underlying nodes visible
  * @param versionId id of the version column
  */
-function createTreemap(project: CCProject, algorithm: Function, metric: string, leafMargin: number, versionId: string) {
-    let nodes: VisualizationNode[] = [];
-    // REVIEW: in einer createTreemap wird eine street erzeugt. Das passt nicht so ganz.
-    // Vielleicht besser createVisualization?
+function createVisualization(project: CCProject, algorithm: Function, metric: string, leafMargin: number, versionId: string) {
+    let nodes: VisualNode[] = [];
     if(algorithm === streetMap) {
         // REVIEW: wenn man statt Function einen Objekt-Typ verwendet,
         // könnte der Zugriff z.B. der Aufruf von draw() hier typsicher erfolgen.
-        const street = algorithm(project.nodes[0], metric);
-        // REVIEW: rootStreet statt street?
-        svgWidth = street.width;
-        svgHeight = street.height
-        nodes = street.draw(new Point(0, 0));
+        const rootStreet = algorithm(project.nodes[0], metric);
+        svgWidth = rootStreet.width;
+        svgHeight = rootStreet.height
+        nodes = rootStreet.layout(new Point(0, 0));
     } else {
         nodes = algorithm(project.nodes, new Rectangle(new Point(0, 0), svgWidth, svgHeight), metric);
     }
@@ -53,7 +49,7 @@ function createTreemap(project: CCProject, algorithm: Function, metric: string, 
 
     codeVersion.select(".title").text(project.projectName);
 
-    const svg = codeVersion.select(".treemap")
+    const svg = codeVersion.select(".visualization")
         .append("svg")
         .attr("width", svgWidth)
         .attr("height", svgHeight);
@@ -63,12 +59,12 @@ function createTreemap(project: CCProject, algorithm: Function, metric: string, 
         .enter()
         .append('rect')
         .attr("class", "treemapNode")
-        .attr("id", (d: VisualizationNode): string => { return versionId + "-" + d.node.name.replace(".", "-") })
-        .attr("x", (d: VisualizationNode): number => { return d.rectangle.topLeft.x + (isFile(d) ? leafMargin : 0) })
-        .attr("y", (d: VisualizationNode): number => { return d.rectangle.topLeft.y + (isFile(d) ? leafMargin : 0) })
-        .attr("height", (d: VisualizationNode): number => { return d.rectangle.height - (isFile(d) && d.rectangle.height > 2 * leafMargin ? 2 * leafMargin : 0) })
-        .attr("width", (d: VisualizationNode): number => { return d.rectangle.width - (isFile(d) && d.rectangle.width > 2 * leafMargin ? 2 * leafMargin : 0) })
-        .style("fill", (d: VisualizationNode): string => { return d.color })
+        .attr("id", (d: VisualNode): string => { return versionId + "-" + d.node.name.replace(".", "-") })
+        .attr("x", (d: VisualNode): number => { return d.rectangle.topLeft.x + (isFile(d) ? leafMargin : 0) })
+        .attr("y", (d: VisualNode): number => { return d.rectangle.topLeft.y + (isFile(d) ? leafMargin : 0) })
+        .attr("height", (d: VisualNode): number => { return d.rectangle.height - (isFile(d) && d.rectangle.height > 2 * leafMargin ? 2 * leafMargin : 0) })
+        .attr("width", (d: VisualNode): number => { return d.rectangle.width - (isFile(d) && d.rectangle.width > 2 * leafMargin ? 2 * leafMargin : 0) })
+        .style("fill", (d: VisualNode): string => { return d.color })
         .on("mouseover", handleMouseover)
         .on("mouseout", handleMouseout)
         .on("click", createAttributeList);
@@ -79,7 +75,7 @@ function createTreemap(project: CCProject, algorithm: Function, metric: string, 
  * 
  * @param treemapNode treemap node which event is registered on 
  */
-function handleMouseover(treemapNode: VisualizationNode) {
+function handleMouseover(treemapNode: VisualNode) {
     let color = "lightgrey";
     select(event.currentTarget).style("fill", color);
     const codeVersion = select(event.currentTarget.closest(".codeVersion"));
@@ -92,7 +88,7 @@ function handleMouseover(treemapNode: VisualizationNode) {
  * 
  * @param treemapNode treemap node which event is registered on 
  */
-function handleMouseout(treemapNode: VisualizationNode) {
+function handleMouseout(treemapNode: VisualNode) {
     let color = treemapNode.color;
     select(event.currentTarget).style("fill", color);
     const codeVersion = select(event.currentTarget.closest(".codeVersion"));
@@ -125,7 +121,7 @@ function colorizeOtherNode(codeVersionId: string, nodeId: string, color: string)
  * 
  * @param treemapNode the selected treemapNode
  */
-function createAttributeList(treemapNode: VisualizationNode) {
+function createAttributeList(treemapNode: VisualNode) {
     const codeVersion = select(event.currentTarget.closest(".codeVersion"));
     const attributeList = codeVersion.select(".attributes");
     if (!attributeList.select("table").empty()) {
@@ -149,7 +145,7 @@ function createAttributeList(treemapNode: VisualizationNode) {
             codeVersion.select("svg").remove();
             let versionId = codeVersion.attr("id");
             let project = versionId === "oldVersion" ? projects[0] : projects[1];
-            createTreemap(project, squarify, metric, 1, codeVersion.attr("id"));
+            createVisualization(project, squarify, metric, 1, codeVersion.attr("id"));
         });
         row.append("td").text(String(value));
     });
@@ -160,6 +156,6 @@ function createAttributeList(treemapNode: VisualizationNode) {
  * 
  * @param treemapNode treemap node to be checked
  */
-function isFile(treemapNode: VisualizationNode): boolean {
+function isFile(treemapNode: VisualNode): boolean {
     return treemapNode.node.type === "File";
 }
