@@ -1,9 +1,9 @@
 import Rectangle from "../models/visualization/Rectangle";
-import TreemapNode from "../models/visualization/VisualNode";
+import VisualNode from "../models/visualization/VisualNode";
 import CCNode from "../models/codeCharta/CCNode";
 import Point from "../models/visualization/Point";
 
-let treemapNodes: TreemapNode[] = [];
+let treemapNodes: VisualNode[] = [];
 
 /**
  * 
@@ -13,10 +13,10 @@ let treemapNodes: TreemapNode[] = [];
  * @param canvas rectangle in which the treemap should be placed
  * @param metric metric by which Treemap Nodes are scaled
  */
-export default function sliceAndDice(nodes: CCNode[], canvas: Rectangle, metric: string): TreemapNode[] {
+export default function sliceAndDice(root: CCNode, canvas: Rectangle, metric: string): VisualNode[] {
     let topLeft: [number, number] = [canvas.topLeft.x, canvas.topLeft.y];
     let bottomRight: [number, number] = [canvas.topLeft.x + canvas.width, canvas.topLeft.y + canvas.height];
-    treemap(nodes[0], topLeft, bottomRight, 0, metric);
+    treemap(root, topLeft, bottomRight, 0, metric);
     return treemapNodes;
 }
 
@@ -34,7 +34,7 @@ function treemap(root: CCNode, topLeft: [number, number], bottomRight: [number, 
     let newTopLeft: [number, number] = [topLeft[0], topLeft[1]];
     let newBottomRight: [number, number] = [bottomRight[0], bottomRight[1]];
     //adds new Treemap Node for Code Charta Node
-    treemapNodes.push(new TreemapNode(new Rectangle(new Point(topLeft[0], topLeft[1]), bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]), root, colorize(root)));
+    treemapNodes.push(new VisualNode(new Rectangle(new Point(topLeft[0], topLeft[1]), bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]), root, colorize(root)));
     //uses x or y coord depending on orientation of the rectangle
     let width = bottomRight[axis] - topLeft[axis];
 

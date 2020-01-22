@@ -1,4 +1,4 @@
-import Box, { Colors } from "./Box";
+import Box, { Color } from "./Box";
 import CCNode from "../codeCharta/CCNode";
 import Rectangle from "../visualization/Rectangle";
 import Point from "../visualization/Point";
@@ -68,7 +68,7 @@ export default class VerticalStreet extends Box {
         const streetOffsetX = this.calculateStreetOffsetX(origin, maxLeftWidth);
         const streetOrigin = new Point(streetOffsetX, origin.y);
         const streetRectangle = new Rectangle(streetOrigin, this.STREET_WIDTH, this.height);
-        return new VisualNode(streetRectangle, this.node, Colors.StreetColor);
+        return new VisualNode(streetRectangle, this.node, Color.StreetColor);
     }
 
     /**

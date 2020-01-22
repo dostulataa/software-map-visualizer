@@ -1,12 +1,13 @@
 import Rectangle from "../models/visualization/Rectangle";
-import TreemapNode from "../models/visualization/VisualNode";
+import VisualNode from "../models/visualization/VisualNode";
 import CCNode from "../models/codeCharta/CCNode";
 import Point from "../models/visualization/Point";
 
-let treemapNodes: TreemapNode[] = [];
+let treemapNodes: VisualNode[] = [];
+
+export enum Color { Folder = "SteelBlue", File = "LightSteelBlue" }
 
 /**
- * 
  * Default function for Squarified Algorithm. Prepares data for algorithm
  * and returns the boxes that have been created
  * 
@@ -14,10 +15,9 @@ let treemapNodes: TreemapNode[] = [];
  * @param canvas rectangle in which the treemap should be placed
  * @param metric metric by which treemap nodes are scaled
  */
-export default function squarify(nodes: CCNode[], canvas: Rectangle, metric: string): TreemapNode[] {
-    let root = nodes[0];
+export default function squarify(root: CCNode, canvas: Rectangle, metric: string): VisualNode[] {
     let children: CCNode[] = root.children;
-    treemapNodes.push(new TreemapNode(canvas, root, colorize(root)));
+    treemapNodes.push(new VisualNode(canvas, root, Color.Folder));
     if (children.length === 0) {
         return treemapNodes;
     }
@@ -26,7 +26,6 @@ export default function squarify(nodes: CCNode[], canvas: Rectangle, metric: str
 }
 
 /**
- * 
  * The actual algorithm function that creates the Treemap 
  * 
  * @param children children of the node that should be displayed as a treemap
@@ -63,7 +62,7 @@ function treemap(children: CCNode[], rect: Rectangle, metric: string, rootSize: 
 
         /* Start squarify algorithm for children nodes that have children of their own */
         for (let i = 0; i < row.length; i++) {
-            const node: CCNode = row[i];
+            const node = row[i];
             if (node.children.length > 0) {
                 treemap(sort(node.children, metric), rects[i], metric, node.size(metric));
             }
@@ -90,7 +89,6 @@ function worst(row: CCNode[], rect: Rectangle, metric: string, rootSize: number)
 }
 
 /**
- * 
  * Scales the metric to the size of the parent rectangle
  * 
  * @param size size of the node
@@ -103,7 +101,6 @@ function scale(size: number, rootSize: number, rect: Rectangle): number {
 }
 
 /**
- * 
  * Returns the smallest size node in a list of nodes
  * 
  * @param row current row of nodes to be layed out
@@ -116,7 +113,6 @@ function min(row: CCNode[], rect: Rectangle, metric: string, rootSize: number): 
 }
 
 /**
- * 
  * Returns the largest size node in a list of nodes
  * 
  * @param row current row of nodes to be layed out
@@ -129,23 +125,16 @@ function max(row: CCNode[], rect: Rectangle, metric: string, rootSize: number): 
 }
 
 /**
- * 
  * Returns the total size of a list of nodes (don't forget to scale size if needed)
  * 
  * @param nodes list of nodes to be examined
  * @param metric metric by which rectangle area is determined
  */
 function totalSize(nodes: CCNode[], metric: string): number {
-    let total = 0;
-    for (const a of nodes) {
-        total += a.size(metric);
-    }
-    return total;
-    // return nodes.reduce((total, n) => total + n.size(metric), 0);
+    return nodes.reduce((total, n) => total + n.size(metric), 0);
 }
 
 /**
- * 
  * Sorts input nodes by metric size
  * 
  * @param nodes list of nodes to be sorted
@@ -156,7 +145,6 @@ function sort(nodes: CCNode[], metric: string): CCNode[] {
 }
 
 /**
- * 
  * Calculates the remaining rectangle after a row has been layed out.
  * 
  * @param row row that has just been layed out
@@ -171,16 +159,13 @@ function remainingRect(row: CCNode[], rect: Rectangle, metric: string, rootSize:
     let newRect: Rectangle;
     if (rect.isVertical()) {
         newRect = new Rectangle(new Point(rect.topLeft.x, rect.topLeft.y + h), rect.width, rect.height - h);
-        // newRect = new Rectangle([rect.topLeft[0], rect.topLeft[1] + h], [rect.bottomRight[0], rect.bottomRight[1]]);
     } else {
         newRect = new Rectangle(new Point(rect.topLeft.x + h, rect.topLeft.y), rect.width - h, rect.height);
-        // newRect = new Rectangle([rect.topLeft[0] + h, rect.topLeft[1]], [rect.bottomRight[0], rect.bottomRight[1]]);
     }
     return newRect;
 }
 
 /**
- * 
  * Lays out new row and returns the newly created rectangles
  * 
  * @param row the row of nodes to be layed out
@@ -190,41 +175,31 @@ function remainingRect(row: CCNode[], rect: Rectangle, metric: string, rootSize:
  */
 function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: number) {
     const rowSize: number = scale(totalSize(row, metric), rootSize, rect);
-    const w = rect.shorterSide() > 0 ? rect.shorterSide() : 1; // row width (side of the rect on which nodes are to be laid out)
-    const h: number = rowSize / w; // row height
+    const rowWidth = rect.shorterSide() > 0 ? rect.shorterSide() : 1; // row width (side of the rect on which nodes are to be laid out)
+    const rowHeight: number = rowSize / rowWidth;
     let x: number = rect.topLeft.x;
     let y: number = rect.topLeft.y;
     const rects: Rectangle[] = [];
 
     for (const node of row) {
         let nodeW: number = scale(node.size(metric), rootSize, rect);
-        if(h !== 0) {
-            nodeW = nodeW / h;
+        const color = node.type === "File" ? Color.File : Color.Folder;
+        if(rowHeight !== 0) {
+            nodeW = nodeW / rowHeight;
         }
         if (rect.isVertical()) {
-            //Row is layed out horizontally
-            const newRect = new Rectangle(new Point(x, y), nodeW, h);
-            // const newRect: Rectangle = new Rectangle([x, y], [x + nodeW, y + h]);
-            treemapNodes.push(new TreemapNode(newRect, node, colorize(node)));
+            // Row is layed out horizontally
+            const newRect = new Rectangle(new Point(x, y), nodeW, rowHeight);
+            treemapNodes.push(new VisualNode(newRect, node, color));
             rects.push(newRect);
             x += nodeW;
         } else {
             // Row is layed out vertically
-            const newRect = new Rectangle(new Point(x, y), h, nodeW);
-            // const newRect: Rectangle = new Rectangle([x, y], [x + h, y + nodeW]);
-            treemapNodes.push(new TreemapNode(newRect, node, colorize(node)));
+            const newRect = new Rectangle(new Point(x, y), rowHeight, nodeW);
+            treemapNodes.push(new VisualNode(newRect, node, color));
             rects.push(newRect);
             y += nodeW;
         }
     }
-
     return rects;
-}
-
-/**
- * Returns color depending on file's type
- * @param node current node being colorized
- */
-function colorize(node: CCNode): string {
-    return node.type === "File" ? "lightsteelblue" : "SteelBlue";
 }

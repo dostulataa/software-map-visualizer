@@ -1,4 +1,4 @@
-import Box, { Colors } from "./Box";
+import Box, { Color } from "./Box";
 import CCNode from "../codeCharta/CCNode"
 import Point from "../visualization/Point";
 import Rectangle from "../visualization/Rectangle";
@@ -17,7 +17,7 @@ export default class House extends Box {
     }
 
     public layout(origin: Point): VisualNode[] {
-        const newNode = new VisualNode(new Rectangle(new Point(origin.x, origin.y), this.width, this.height), this.node, Colors.HouseColor);
+        const newNode = new VisualNode(new Rectangle(new Point(origin.x, origin.y), this.width, this.height), this.node, Color.HouseColor);
         return [newNode];
     }
 }

@@ -2,7 +2,7 @@ import CCNode from "../codeCharta/CCNode";
 import Point from "../visualization/Point";
 import Rectangle from "../visualization/Rectangle";
 import VisualNode from "../visualization/VisualNode";
-import Box, { Colors } from "./Box";
+import Box, { Color } from "./Box";
 import VerticalStreet, { VerticalOrientation } from "./VerticalStreet";
 
 export enum HorizontalOrientation { RIGHT, LEFT }
@@ -68,7 +68,7 @@ export default class HorizontalStreet extends Box {
         const streetOffsetY = this.calculateStreetOffsetY(origin, maxTopHeight);
         const streetOrigin = new Point(origin.x, streetOffsetY);
         const streetRectangle = new Rectangle(streetOrigin, this.width, this.STREET_HEIGHT)
-        return new VisualNode(streetRectangle, this.node, Colors.StreetColor);
+        return new VisualNode(streetRectangle, this.node, Color.StreetColor);
     }
 
     /**

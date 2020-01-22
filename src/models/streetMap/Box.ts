@@ -2,7 +2,7 @@ import CCNode from "../codeCharta/CCNode";
 import Point from "../visualization/Point";
 import VisualNode from "../visualization/VisualNode";
 
-export enum Colors {StreetColor="SteelBlue", HouseColor="LightSteelBlue"};
+export enum Color { StreetColor = "SteelBlue", HouseColor = "LightSteelBlue" };
 
 /**
  * Bounding box of an element in the street layout.
@@ -15,7 +15,7 @@ export default abstract class Box {
     constructor(node: CCNode) {
         this.node = node;
     }
-    
+
     /**
      * Calculates height and width of the box and assigns nodes to rows.
      * @param metric 
