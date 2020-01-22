@@ -2,7 +2,8 @@ import validateInputFiles from "./Validation";
 import Rectangle from "./models/visualization/Rectangle";
 import VisualizationNode from "./models/visualization/VisualizationNode";
 import CCProject from "./models/codeCharta/CCProject";
-import junit2018 from "./input/codeCharta";
+// REVIEW: junit2018 -> codeCharta ?
+import junit2018 from "./input/junit5_2018-10-27.cc";
 import junit2019 from "./input/junit5_2019-10-26.cc";
 import schema from "./schema";
 import { select, event } from "d3-selection";
@@ -19,9 +20,9 @@ let svgHeight = 400;
 const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
 const metric = "rloc";
 
-// createTreemap(projects[0], squarify, metric, 1, "oldVersion");
-// createTreemap(projects[1], sliceAndDice, metric, 1, "newVersion");
-createTreemap(projects[0], streetMap, metric, 1, "oldVersion");
+createTreemap(projects[0], squarify, metric, 1, "oldVersion");
+createTreemap(projects[1], squarify, metric, 1, "newVersion");
+//createTreemap(projects[1], streetMap, metric, 1, "oldVersion");
 
 
 /**
@@ -34,8 +35,13 @@ createTreemap(projects[0], streetMap, metric, 1, "oldVersion");
  */
 function createTreemap(project: CCProject, algorithm: Function, metric: string, leafMargin: number, versionId: string) {
     let nodes: VisualizationNode[] = [];
+    // REVIEW: in einer createTreemap wird eine street erzeugt. Das passt nicht so ganz.
+    // Vielleicht besser createVisualization?
     if(algorithm === streetMap) {
+        // REVIEW: wenn man statt Function einen Objekt-Typ verwendet,
+        // könnte der Zugriff z.B. der Aufruf von draw() hier typsicher erfolgen.
         const street = algorithm(project.nodes[0], metric);
+        // REVIEW: rootStreet statt street?
         svgWidth = street.width;
         svgHeight = street.height
         nodes = street.draw(new Point(0, 0));

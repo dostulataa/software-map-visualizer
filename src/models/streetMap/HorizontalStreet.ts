@@ -7,6 +7,9 @@ import VerticalStreet, { VerticalOrientation } from "./VerticalStreet";
 
 export enum HorizontalOrientation { RIGHT, LEFT }
 
+// REVIEW: die Klasse ähnelt sehr der VerticalStreet. Kann man eine allgemeine Klasse
+// bilden? Vielleicht mit leftSide und rightSide? je nach Standpunkt wäre es dann
+// left/right.
 export default class HorizontalStreet extends Box {
 
     private children: Box[] = [];
@@ -54,6 +57,8 @@ export default class HorizontalStreet extends Box {
             nodes.push.apply(nodes, this.topRow[i].draw(new Point(origin.x + this.getLengthUntil(this.topRow, i), origin.y + this.SPACER + (maxTopHeight - this.topRow[i].height))));
         }
 
+        // REVIEW: jedes mal wenn man einen Kommentar schreibt, könnte man eine
+        // Funktion extrahieren, deren Name den Kommentar enthält.
         //Draw street
         nodes.push(new VisualizationNode(new Rectangle(new Point(origin.x, origin.y + maxTopHeight + this.SPACER), this.width, this.STREET_HEIGHT), this.node, this.COLOR));
 
@@ -90,6 +95,8 @@ export default class HorizontalStreet extends Box {
      * Divides children nodes into top- and bottomrow
      * @param children children of the current node
      */
+    // REVIEW: setRows ist recht allgemein. Ich würde die Funktion so benennen
+    // wie in der Beschreibung: spreadChildrenToStreetSides
     private setRows(children: Box[]) {
         const totalLength = this.getLength(children);
         let sum = 0;
