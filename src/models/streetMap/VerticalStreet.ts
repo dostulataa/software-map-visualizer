@@ -22,7 +22,6 @@ export default class VerticalStreet extends Box {
         this.orientation = orientation;
     }
 
-
     public layout(metric: string): void {
         //Layout all children
         for (const child of this.children) {
@@ -31,6 +30,12 @@ export default class VerticalStreet extends Box {
 
         //Divide children in leftRow and rightRow
         this.setRows(this.children);
+
+        if (this.orientation === VerticalOrientation.UP) {
+            this.leftRow = this.leftRow.reverse();
+        } else {
+            this.rightRow = this.rightRow.reverse();
+        }
 
         //Set width and height of box
         this.width = this.getMaxWidth(this.leftRow) + this.STREET_WIDTH + this.getMaxWidth(this.rightRow) + 2 * this.SPACER;
@@ -90,14 +95,12 @@ export default class VerticalStreet extends Box {
 
         for (let i = 0; i < children.length; i++) {
             if (sum < totalLength / 2) {
+                if (children[i] instanceof HorizontalStreet) {
+                    (<HorizontalStreet>children[i]).orientation = HorizontalOrientation.LEFT;
+                }
                 this.leftRow.push(children[i]);
                 sum += children[i].height;
             } else {
-                if (children[i] instanceof HorizontalStreet) {
-                    if (children[i] instanceof HorizontalStreet) {
-                        (<HorizontalStreet>children[i]).orientation = HorizontalOrientation.RIGHT;
-                    }
-                }
                 this.rightRow.push(children[i]);
             }
         }

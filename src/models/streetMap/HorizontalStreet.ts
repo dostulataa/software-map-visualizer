@@ -17,7 +17,7 @@ export default class HorizontalStreet extends Box {
     private SPACER = 2;
     public orientation: HorizontalOrientation;
 
-    constructor(node: CCNode, children: Box[], orientation: HorizontalOrientation = HorizontalOrientation.LEFT) {
+    constructor(node: CCNode, children: Box[], orientation: HorizontalOrientation = HorizontalOrientation.RIGHT) {
         super(node);
         this.children = children;
         this.orientation = orientation;
@@ -31,6 +31,12 @@ export default class HorizontalStreet extends Box {
 
         //Divide children in topRow and bottomRow
         this.setRows(this.children);
+
+        if(this.orientation === HorizontalOrientation.RIGHT) {
+            this.bottomRow = this.bottomRow.reverse();
+        } else {
+            this.topRow = this.topRow.reverse();
+        }
 
         //Set width and hight of box
         this.width = Math.max(this.getLength(this.topRow), this.getLength(this.bottomRow));
