@@ -24,4 +24,8 @@ export default class Rectangle {
     public isVertical(): boolean {
         return this.height > this.width;
     }
+
+    public area(): number {
+        return this.width * this.height;
+    }
 }

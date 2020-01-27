@@ -96,6 +96,7 @@ function worst(row: CCNode[], rect: Rectangle, metric: string, rootSize: number)
  * @param rect rectangle of the parent node
  */
 function scale(size: number, rootSize: number, rect: Rectangle): number {
+    if (rootSize === 0) return 0;
     const scale = rect.width * rect.height / rootSize;
     return scale * size;
 }
@@ -184,9 +185,7 @@ function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: num
     for (const node of row) {
         let nodeW: number = scale(node.size(metric), rootSize, rect);
         const color = node.type === "File" ? Color.File : Color.Folder;
-        if(rowHeight !== 0) {
-            nodeW = nodeW / rowHeight;
-        }
+        if (rowHeight !== 0) nodeW = nodeW / rowHeight;
         if (rect.isVertical()) {
             // Row is layed out horizontally
             const newRect = new Rectangle(new Point(x, y), nodeW, rowHeight);

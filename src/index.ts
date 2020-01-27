@@ -2,26 +2,25 @@ import validateInputFiles from "./Validation";
 import Rectangle from "./models/visualization/Rectangle";
 import VisualNode from "./models/visualization/VisualNode";
 import CCProject from "./models/codeCharta/CCProject";
-import junit2018 from "./input/junit5_2018-10-27.cc";
+import junit2018 from "./input/codecharta_2020-01-23_08-15.cc";
 import junit2019 from "./input/junit5_2019-10-26.cc";
 import schema from "./schema";
 import { select, event } from "d3-selection";
 import squarify from "./algorithms/squarified";
 import Point from "./models/visualization/Point";
-// import sliceAndDice from "./algorithms/sliceAndDice";
 import streetMap from "./algorithms/streetMap";
+// import strip from "./algorithms/strip";
 
 const inputFiles = [junit2018, junit2019];
 validateInputFiles(schema, inputFiles); // Checks for input data validity with schema
 
-let svgWidth = 600;
+let svgWidth = 400;
 let svgHeight = 400;
 const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
 const metric = "rloc";
 
-// createTreemap(projects[0], squarify, metric, 1, "oldVersion");
-// createTreemap(projects[1], squarify, metric, 1, "newVersion");
-createVisualization(projects[1], streetMap, metric, 1, "oldVersion");
+// createVisualization(projects[0], strip, metric, 1, "oldVersion");
+createVisualization(projects[0], streetMap, metric, 0.5, "oldVersion");
 
 
 /**
@@ -42,7 +41,7 @@ function createVisualization(project: CCProject, algorithm: Function, metric: st
         svgHeight = rootStreet.height
         nodes = rootStreet.layout(new Point(0, 0));
     } else {
-        nodes = algorithm(project.nodes, new Rectangle(new Point(0, 0), svgWidth, svgHeight), metric);
+        nodes = algorithm(project.nodes[0], new Rectangle(new Point(0, 0), svgWidth, svgHeight), metric);
     }
 
     const codeVersion = select(`#${versionId}`);
