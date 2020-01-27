@@ -184,7 +184,7 @@ function layoutRow(row: CCNode[], rect: Rectangle, metric: string, rootSize: num
 
     for (const node of row) {
         let nodeW: number = scale(node.size(metric), rootSize, rect);
-        const color = node.type === "File" ? Color.File : Color.Folder;
+        const color = node.isFile() ? Color.File : Color.Folder;
         if (rowHeight !== 0) nodeW = nodeW / rowHeight;
         if (rect.isVertical()) {
             // Row is layed out horizontally

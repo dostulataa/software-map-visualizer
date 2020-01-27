@@ -11,4 +11,12 @@ export default class VisualNode {
         this.node = node;
         this.color = color;
     }
+
+    public isFile(): boolean {
+        return this.node.isFile();
+    }
+
+    public isFolder(): boolean {
+        return this.node.isFolder();
+    }
 }

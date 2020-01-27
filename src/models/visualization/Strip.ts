@@ -28,7 +28,7 @@ export default class Strip {
             const nodeSize = node.scaledSize(metric, rootSize, rootArea);
             const nodeWidth = height > 0 ? nodeSize / height : 0;
             const newRect = new Rectangle(new Point(x, rect.topLeft.y), nodeWidth, height);
-            const color = node.type === "File" ? Color.File : Color.Folder;
+            const color = node.isFile() ? Color.File : Color.Folder;
             treemapNodes.push(new VisualNode(newRect, node, color));
             x += nodeWidth;
         }

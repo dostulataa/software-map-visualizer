@@ -6,7 +6,7 @@ export default class CCNode {
     public id?: number;
     public link?: string;
 
-    private constructor(name: string, type: "File" | "Folder", attributes: Map<string, number>, children: CCNode[], id?: number, link?: string | undefined) {
+    private constructor(name: string, type: "File" | "Folder", attributes: Map<string, number>, children: CCNode[], id?: number, link?: string) {
         this.name = name;
         this.type = type;
         this.attributes = attributes;
@@ -45,6 +45,14 @@ export default class CCNode {
         const size = this.size(metric);
         const scale = parentArea / parentSize;
         return scale * size;
+    }
+
+    public isFile(): boolean {
+        return this.type === "File";
+    }
+
+    public isFolder(): boolean {
+        return this.type === "Folder";
     }
 
     /**

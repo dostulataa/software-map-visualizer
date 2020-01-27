@@ -9,7 +9,7 @@ export default class Treemap extends Box {
     private metric: string;
 
     constructor(node: CCNode, metric: string) {
-        super(node);
+        super(node)
         this.metric = metric;
     }
 

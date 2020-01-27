@@ -23,24 +23,24 @@ function treemap(children: CCNode[], rect: Rectangle, metric: string, rootSize: 
     let order = Order.leftToRight;
 
     do {
-        const newStrip = populateStrip(children, processed, currentRect, currentRootSize, metric);
+        const currentStrip = populateStrip(children, processed, currentRect, currentRootSize, metric);
 
         /* Create new row of rectangles with current nodes in strip */
-        const nodes = newStrip.layout(currentRect, currentRootSize, metric, order);
+        const nodes = currentStrip.layout(currentRect, currentRootSize, metric, order);
         treemapNodes.push(...nodes);
 
         /* Start algorithm for children nodes that have children of their own */
-        for (let i = 0; i < newStrip.nodes.length; i++) {
-            const node = newStrip.nodes[i];
+        for (let i = 0; i < currentStrip.nodes.length; i++) {
+            const node = currentStrip.nodes[i];
             if (node.children.length > 0) {
                 treemap(node.children, nodes[i].rectangle, metric, node.size(metric));
             }
         }
 
         order = 1 - order;
-        processed += newStrip.nodes.length;
-        currentRect = remainingRectangle(currentRect, newStrip, currentRootSize, currentRect.area(), metric);
-        currentRootSize = remainingRootSize(currentRootSize, newStrip, metric);
+        processed += currentStrip.nodes.length;
+        currentRect = remainingRectangle(currentRect, currentStrip, currentRootSize, currentRect.area(), metric);
+        currentRootSize = remainingRootSize(currentRootSize, currentStrip, metric);
     } while (processed < children.length); /* as long as there are children to process */
 }
 

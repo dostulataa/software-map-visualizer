@@ -5,6 +5,8 @@ import Point from "../../models/visualization/Point";
 
 let treemapNodes: VisualNode[] = [];
 
+export enum Color { Folder = "SteelBlue", File = "LightSteelBlue" }
+
 /**
  * 
  * Default function for Slice and Dice Algorithm. Returns the treemap nodes that have been created
@@ -33,10 +35,14 @@ export default function sliceAndDice(root: CCNode, canvas: Rectangle, metric: st
 function treemap(root: CCNode, topLeft: [number, number], bottomRight: [number, number], axis: number, metric: string) {
     let newTopLeft: [number, number] = [topLeft[0], topLeft[1]];
     let newBottomRight: [number, number] = [bottomRight[0], bottomRight[1]];
-    //adds new Treemap Node for Code Charta Node
-    treemapNodes.push(new VisualNode(new Rectangle(new Point(topLeft[0], topLeft[1]), bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]), root, colorize(root)));
+    const color = root.isFile() ? Color.File : Color.Folder; 
+    const newOrigin = new Point(topLeft[0], topLeft[1]);
+    const newWidth = bottomRight[0] - topLeft[0];
+    const newHeight = bottomRight[1] - topLeft[1];
+    const newRect = new Rectangle(newOrigin, newWidth, newHeight);
+    treemapNodes.push(new VisualNode(newRect, root, color));
     //uses x or y coord depending on orientation of the rectangle
-    let width = bottomRight[axis] - topLeft[axis];
+    const width = bottomRight[axis] - topLeft[axis];
 
     for (const child of root.children) {
         if (root.size(metric) !== 0) {
@@ -47,12 +53,4 @@ function treemap(root: CCNode, topLeft: [number, number], bottomRight: [number, 
             newTopLeft[axis] = newBottomRight[axis];
         }
     }
-}
-
-/**
- * Returns color depending on file's type
- * @param node current node being colorized
- */
-function colorize(node: CCNode): string {
-    return node.type === "File" ? "LightSteelBlue" : "SteelBlue";
 }
