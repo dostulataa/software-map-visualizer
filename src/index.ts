@@ -6,7 +6,7 @@ import junit2018 from "./input/codecharta_2020-01-23_08-15.cc";
 import junit2019 from "./input/junit5_2019-10-26.cc";
 import schema from "./schema";
 import { select, event } from "d3-selection";
-import squarify from "./algorithms/squarified";
+import squarify from "./algorithms/treemap/squarified";
 import Point from "./models/visualization/Point";
 import streetMap from "./algorithms/streetMap";
 // import strip from "./algorithms/strip";

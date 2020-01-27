@@ -1,6 +1,6 @@
 import CCNode from "../codeCharta/CCNode";
 import Rectangle from "./Rectangle";
-import { Color } from "../../algorithms/squarified";
+import { Color } from "../../algorithms/treemap/squarified";
 import Point from "./Point";
 import VisualNode from "./VisualNode";
 

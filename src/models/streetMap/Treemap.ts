@@ -2,7 +2,7 @@ import Box from "./Box"
 import Point from "../visualization/Point";
 import VisualNode from "../visualization/VisualNode";
 import CCNode from "../codeCharta/CCNode";
-import strip from "../../algorithms/strip";
+import strip from "../../algorithms/treemap/strip";
 import Rectangle from "../visualization/Rectangle";
 
 export default class Treemap extends Box {
