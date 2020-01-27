@@ -8,16 +8,18 @@ import VerticalStreet, { VerticalOrientation } from "./VerticalStreet";
 export enum HorizontalOrientation { RIGHT, LEFT }
 
 export default class HorizontalStreet extends Box {
+    private depth: number;
     private children: Box[] = [];
     private topRow: Box[] = [];
     private bottomRow: Box[] = [];
-    private STREET_HEIGHT = 5;
+    private STREET_HEIGHT = 10;
     private SPACER = 2;
     public orientation: HorizontalOrientation;
 
-    constructor(node: CCNode, children: Box[], orientation: HorizontalOrientation = HorizontalOrientation.RIGHT) {
+    constructor(node: CCNode, children: Box[], depth: number, orientation: HorizontalOrientation = HorizontalOrientation.RIGHT) {
         super(node);
         this.children = children;
+        this.depth = depth;
         this.orientation = orientation;
     }
 
@@ -32,7 +34,7 @@ export default class HorizontalStreet extends Box {
 
         //Set width and hight of box
         this.width = Math.max(this.getLength(this.topRow), this.getLength(this.bottomRow));
-        this.height = this.getMaxHeight(this.topRow) + this.STREET_HEIGHT + this.getMaxHeight(this.bottomRow) + 2 * this.SPACER;
+        this.height = this.getMaxHeight(this.topRow) + this.getStreetHeight() + this.getMaxHeight(this.bottomRow) + 2 * this.SPACER;
     }
 
     public layout(origin: Point): VisualNode[] {
@@ -67,7 +69,7 @@ export default class HorizontalStreet extends Box {
     private layoutStreet(origin: Point, maxTopHeight: number): VisualNode {
         const streetOffsetY = this.calculateStreetOffsetY(origin, maxTopHeight);
         const streetOrigin = new Point(origin.x, streetOffsetY);
-        const streetRectangle = new Rectangle(streetOrigin, this.width, this.STREET_HEIGHT)
+        const streetRectangle = new Rectangle(streetOrigin, this.width, this.getStreetHeight())
         return new VisualNode(streetRectangle, this.node, Color.StreetColor);
     }
 
@@ -80,7 +82,7 @@ export default class HorizontalStreet extends Box {
         const nodes: VisualNode[] = [];
         for (let i = 0; i < this.bottomRow.length; i++) {
             const childOriginX = this.calculateChildOriginX(origin, i, this.bottomRow);
-            const childOriginY = this.calculateStreetOffsetY(origin, maxTopHeight) + this.STREET_HEIGHT;
+            const childOriginY = this.calculateStreetOffsetY(origin, maxTopHeight) + this.getStreetHeight();
             const childOrigin = new Point(childOriginX, childOriginY)
             nodes.push.apply(nodes, this.bottomRow[i].layout(childOrigin));
         }
@@ -93,7 +95,7 @@ export default class HorizontalStreet extends Box {
      * @param index index in row of current node
      * @param row the node's row
      */
-    private calculateChildOriginX(origin: Point, index: number, row: Box[]) {
+    private calculateChildOriginX(origin: Point, index: number, row: Box[]): number {
         return origin.x + this.getLengthUntil(row, index);
     }
 
@@ -131,7 +133,7 @@ export default class HorizontalStreet extends Box {
      * Divides children nodes into top- and bottomrow
      * @param children children of the current node
      */
-    private splitChildrenToRows(children: Box[]) {
+    private splitChildrenToRows(children: Box[]): void {
         const totalLength = this.getLength(children);
         let sum = 0;
 
@@ -151,7 +153,7 @@ export default class HorizontalStreet extends Box {
     /**
      * Arranges rows according to their orientation
      */
-    private rearrangeRows() {
+    private rearrangeRows(): void {
         if (this.orientation === HorizontalOrientation.RIGHT) {
             this.bottomRow = this.bottomRow.reverse();
         } else {
@@ -165,5 +167,15 @@ export default class HorizontalStreet extends Box {
      */
     private getMaxHeight(boxes: Box[]): number {
         return boxes.reduce((max, n) => Math.max(max, n.height), Number.MIN_VALUE);
+    }
+
+    private getStreetHeight(): number {
+        let streetHeight = this.STREET_HEIGHT;
+        if (this.depth < this.STREET_HEIGHT) {
+            streetHeight -= 3 * this.depth;
+        } else {
+            streetHeight = 1;
+        }
+        return streetHeight;
     }
 }

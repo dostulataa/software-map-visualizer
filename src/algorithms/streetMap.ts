@@ -14,7 +14,7 @@ enum StreetOrientation { Horizontal, Vertical };
  */
 export default function init(root: CCNode, metric: string): HorizontalStreet {
     const boxes = createBoxes(root, 0, metric, 0);
-    const street = new HorizontalStreet(root, boxes);
+    const street = new HorizontalStreet(root, boxes, 0);
     street.calculateDimension(metric);
     return street;
 }
@@ -27,7 +27,7 @@ export default function init(root: CCNode, metric: string): HorizontalStreet {
 function createBoxes(node: CCNode, orientation: StreetOrientation, metric: string, depth: number): Box[] {
     const children: Box[] = [];
     for (const child of node.children) {
-        if (child.type === "File") {
+        if (child.isFile()) {
             children.push(new House(child));
         } else {
             if(child.size(metric) === 0) {
@@ -37,8 +37,8 @@ function createBoxes(node: CCNode, orientation: StreetOrientation, metric: strin
                 children.push(new Treemap(child, metric));
             } else {
                 children.push(orientation === StreetOrientation.Horizontal
-                    ? new VerticalStreet(child, createBoxes(child, 1 - orientation, metric, depth + 1))
-                    : new HorizontalStreet(child, createBoxes(child, 1 - orientation, metric, depth + 1)));
+                    ? new VerticalStreet(child, createBoxes(child, 1 - orientation, metric, depth + 1), depth + 1)
+                    : new HorizontalStreet(child, createBoxes(child, 1 - orientation, metric, depth + 1), depth + 1));
             }
         }
     }
