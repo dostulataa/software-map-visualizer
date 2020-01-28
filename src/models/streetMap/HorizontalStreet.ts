@@ -170,12 +170,6 @@ export default class HorizontalStreet extends Box {
     }
 
     private getStreetHeight(): number {
-        let streetHeight = this.STREET_HEIGHT;
-        if (this.depth < this.STREET_HEIGHT) {
-            streetHeight -= 3 * this.depth;
-        } else {
-            streetHeight = 1;
-        }
-        return streetHeight;
+        return this.depth > 4 ? 1 : -2 * this.depth + this.STREET_HEIGHT;
     }
 }

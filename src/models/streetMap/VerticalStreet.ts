@@ -170,12 +170,6 @@ export default class VerticalStreet extends Box {
     }
 
     private getStreetWidth(): number {
-        let streetWidth = this.STREET_WIDTH;
-        if (this.depth < this.STREET_WIDTH) {
-            streetWidth -= 2.5 * this.depth;
-        } else {
-            streetWidth = 1;
-        }
-        return streetWidth;
+        return this.depth > 4 ? 1 : -2 * this.depth + this.STREET_WIDTH;
     }
 }
