@@ -1,5 +1,5 @@
 import validateInputFiles from "./Validation";
-import Rectangle from "./models/visualization/Rectangle";
+// import Rectangle from "./models/visualization/Rectangle";
 import VisualNode from "./models/visualization/VisualNode";
 import CCProject from "./models/codeCharta/CCProject";
 import junit2018 from "./input/codeCharta";
@@ -13,8 +13,6 @@ import streetMap from "./algorithms/streetMap";
 const inputFiles = [junit2018, junit2019];
 validateInputFiles(schema, inputFiles); // Checks for input data validity with schema
 
-let svgWidth = 400;
-let svgHeight = 400;
 const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
 const metric = "rloc";
 
@@ -31,26 +29,17 @@ createVisualization(projects[1], streetMap, metric, 0.5, "newVersion");
  * @param versionId id of the version column
  */
 function createVisualization(project: CCProject, algorithm: Function, metric: string, leafMargin: number, versionId: string) {
-    let nodes: VisualNode[] = [];
-    if(algorithm === streetMap) {
-        // REVIEW: wenn man statt Function einen Objekt-Typ verwendet,
-        // könnte der Zugriff z.B. der Aufruf von draw() hier typsicher erfolgen.
-        const rootStreet = algorithm(project.nodes[0], metric);
-        svgWidth = rootStreet.width;
-        svgHeight = rootStreet.height
-        nodes = rootStreet.layout(new Point(0, 0));
-    } else {
-        nodes = algorithm(project.nodes[0], new Rectangle(new Point(0, 0), svgWidth, svgHeight), metric);
-    }
-
+    // REVIEW: wenn man statt Function einen Objekt-Typ verwendet,
+    // könnte der Zugriff z.B. der Aufruf von draw() hier typsicher erfolgen.
+    const rootStreet = algorithm(project.nodes[0], metric);
+    let nodes: VisualNode[] = rootStreet.layout(new Point(0, 0));
     const codeVersion = select(`#${versionId}`);
-
     codeVersion.select(".title").text(project.projectName);
 
     const svg = codeVersion.select(".visualization")
         .append("svg")
-        .attr("width", svgWidth)
-        .attr("height", svgHeight);
+        .attr("width", rootStreet.width)
+        .attr("height", rootStreet.height);
 
     svg.selectAll("rect")
         .data(nodes)
@@ -66,7 +55,7 @@ function createVisualization(project: CCProject, algorithm: Function, metric: st
         .on("mouseover", handleMouseover)
         .on("mouseout", handleMouseout)
         .on("click", createAttributeList)
-        .append("svg:title").text((d: VisualNode): string => { return `${d.node.name}\n${metric}: ${d.node.size(metric)}`});
+        .append("svg:title").text((d: VisualNode): string => { return `${d.node.name}\n${metric}: ${d.node.size(metric)}` });
 }
 
 /**
@@ -79,7 +68,7 @@ function handleMouseover(visualNode: VisualNode) {
     select(event.currentTarget).style("fill", color);
     const codeVersion = select(event.currentTarget.closest(".codeVersion"));
     const codeVersionId = codeVersion.attr("id");
-    colorizeOtherNode(codeVersionId, visualNode.node.name.replace(/\.|\//g, "-"), color); // dot notation would imply a css class
+    colorizeOtherNode(codeVersionId, visualNode.node.name.replace(/\.|\//g, "-"), color); // . and / are not valid
 }
 
 /**
@@ -93,7 +82,7 @@ function handleMouseout(visualNode: VisualNode) {
     target.style("fill", color);
     const codeVersion = select(event.currentTarget.closest(".codeVersion"));
     const codeVersionId = codeVersion.attr("id");
-    colorizeOtherNode(codeVersionId, visualNode.node.name.replace(/\.|\//g, "-"), color); // dot notation would imply a class
+    colorizeOtherNode(codeVersionId, visualNode.node.name.replace(/\.|\//g, "-"), color); // . and / are not valid
 }
 
 /**
@@ -108,10 +97,7 @@ function colorizeOtherNode(codeVersionId: string, nodeId: string, color: string)
     const otherId = `#${otherCodeVersionId}-${nodeId}`;
     const otherNode = select(otherId);
     if (!otherNode.empty()) {
-        // console.log(otherNode.node());
-        // console.log(`recolored ${otherId} with color ${color}`);
         otherNode.style("fill", color);
-        // console.log(`${otherNode.style("fill")}`);
     }
 }
 
