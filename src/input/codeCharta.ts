@@ -1,5 +1,5 @@
 export default {
-    "projectName": "de.maibornwolff.codecharta:visualization",
+    "projectName": "CodeCharta:visualization 2019",
     "apiVersion": "1.1",
     "nodes": [
         {

@@ -1,24 +1,24 @@
 import validateInputFiles from "./Validation";
-// import Rectangle from "./models/visualization/Rectangle";
 import VisualNode from "./models/visualization/VisualNode";
 import CCProject from "./models/codeCharta/CCProject";
-import junit2018 from "./input/codeCharta";
-import junit2019 from "./input/codecharta_2020-01-23_08-15.cc";
+import oldProject from "./input/codeCharta";
+import newProject from "./input/codecharta_2020-01-23_08-15.cc";
 import schema from "./schema";
-import { select, event } from "d3-selection";
-import squarify from "./algorithms/treemap/squarified";
+import { select, event, Selection } from "d3-selection";
 import Point from "./models/visualization/Point";
 import streetMap from "./algorithms/streetMap";
+import { zoom } from "d3-zoom";
 
-const inputFiles = [junit2018, junit2019];
+const inputFiles = [oldProject, newProject];
 validateInputFiles(schema, inputFiles); // Checks for input data validity with schema
-
 const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
+
+let svgWidth = 500;
+let svgHeight = 350;
 const metric = "rloc";
 
-createVisualization(projects[0], streetMap, metric, 0.5, "oldVersion");
-createVisualization(projects[1], streetMap, metric, 0.5, "newVersion");
-
+createVisualization(projects[0], streetMap, metric, 0.3, "oldVersion");
+createVisualization(projects[1], streetMap, metric, 0.3, "newVersion");
 
 /**
  * Creates the Visualization using d3 for drawing
@@ -32,14 +32,16 @@ function createVisualization(project: CCProject, algorithm: Function, metric: st
     // REVIEW: wenn man statt Function einen Objekt-Typ verwendet,
     // könnte der Zugriff z.B. der Aufruf von draw() hier typsicher erfolgen.
     const rootStreet = algorithm(project.nodes[0], metric);
-    let nodes: VisualNode[] = rootStreet.layout(new Point(0, 0));
+    const nodes: VisualNode[] = rootStreet.layout(new Point(0, 0));
     const codeVersion = select(`#${versionId}`);
     codeVersion.select(".title").text(project.projectName);
+    const visualization = codeVersion.select(".visualization");
 
-    const svg = codeVersion.select(".visualization")
+    const svg = visualization
         .append("svg")
-        .attr("width", rootStreet.width)
-        .attr("height", rootStreet.height);
+        .attr("id", "svg-" + versionId)
+        .attr("width", 450)
+        .attr("height", 300);
 
     svg.selectAll("rect")
         .data(nodes)
@@ -54,8 +56,14 @@ function createVisualization(project: CCProject, algorithm: Function, metric: st
         .style("fill", (d: VisualNode): string => { return d.color })
         .on("mouseover", handleMouseover)
         .on("mouseout", handleMouseout)
-        .on("click", createAttributeList)
         .append("svg:title").text((d: VisualNode): string => { return `${d.node.name}\n${metric}: ${d.node.size(metric)}` });
+
+    const zoomBehavior = zoom().extent([[0, 0], [svgWidth, svgHeight]]).scaleExtent([.1, 15]).on("zoom", () => {
+        const transform = event.transform;
+        svg.selectAll("rect.visualNode").attr("transform", transform.toString());
+    });
+
+    (visualization as unknown as Selection<Element, unknown, HTMLElement, any>).call(zoomBehavior);
 }
 
 /**
@@ -96,43 +104,6 @@ function colorizeOtherNode(codeVersionId: string, nodeId: string, color: string)
     const otherCodeVersionId = codeVersionId === "newVersion" ? "oldVersion" : "newVersion";
     const otherId = `#${otherCodeVersionId}-${nodeId}`;
     const otherNode = select(otherId);
-    if (!otherNode.empty()) {
-        otherNode.style("fill", color);
-    }
-}
-
-/**
- * 
- * Creates the attribute table for a box
- * 
- * @param visualNode the selected Node
- */
-function createAttributeList(visualNode: VisualNode) {
-    const codeVersion = select(event.currentTarget.closest(".codeVersion"));
-    const attributeList = codeVersion.select(".attributes");
-    if (!attributeList.select("table").empty()) {
-        attributeList.select("table").remove();
-    }
-    const table = attributeList.append("table");
-    const headerRow = table.append("tr");
-    const headerCellLeft = headerRow.append("th");
-    const headerCellRight = headerRow.append("th");
-
-    headerCellLeft.text("name");
-    headerCellRight.text(visualNode.node.name);
-
-    visualNode.node.attributes.forEach((value: number, key: string) => {
-        const row = table.append("tr");
-        const td = row.append("td").text(key);
-        td.style("cursor", "pointer");
-        td.on("mouseover", () => { select(event.currentTarget).style("background", "lightgrey") });
-        td.on("mouseout", () => { select(event.currentTarget).style("background", "white") });
-        td.on("click", () => {
-            codeVersion.select("svg").remove();
-            const versionId = codeVersion.attr("id");
-            const project = versionId === "oldVersion" ? projects[0] : projects[1];
-            createVisualization(project, squarify, metric, 1, codeVersion.attr("id"));
-        });
-        row.append("td").text(String(value));
-    });
+    if (!otherNode.empty()) otherNode.style("fill", color);
+    
 }

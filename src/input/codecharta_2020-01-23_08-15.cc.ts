@@ -1,5 +1,5 @@
 export default {
-	"projectName": "",
+    "projectName": "CodeCharta:visualization 2020",
 	"apiVersion": "1.1",
 	"nodes": [{
 		"name": "root/de.maibornwolff.codecharta/visualization/app",
