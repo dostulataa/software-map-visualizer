@@ -1,11 +1,9 @@
 import Rectangle from "../../models/visualization/Rectangle";
-import VisualNode from "../../models/visualization/VisualNode";
+import VisualNode, { Color } from "../../models/visualization/VisualNode";
 import CCNode from "../../models/codeCharta/CCNode";
 import Point from "../../models/visualization/Point";
 
 let treemapNodes: VisualNode[] = [];
-
-export enum Color { Folder = "SteelBlue", File = "LightSteelBlue" }
 
 /**
  * 

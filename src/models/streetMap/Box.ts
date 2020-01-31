@@ -2,8 +2,6 @@ import CCNode from "../codeCharta/CCNode";
 import Point from "../visualization/Point";
 import VisualNode from "../visualization/VisualNode";
 
-export enum Color { StreetColor = "SteelBlue", HouseColor = "LightSteelBlue" };
-
 /**
  * Bounding box of an element in the street layout.
  */

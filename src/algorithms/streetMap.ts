@@ -33,7 +33,7 @@ function createBoxes(node: CCNode, orientation: StreetOrientation, metric: strin
             if(child.size(metric) === 0) {
                 continue;
             }
-            if(depth >= 3) {
+            if(depth >= 5) {
                 children.push(new Treemap(child, metric));
             } else {
                 children.push(orientation === StreetOrientation.Horizontal

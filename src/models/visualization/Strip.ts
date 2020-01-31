@@ -1,8 +1,7 @@
 import CCNode from "../codeCharta/CCNode";
 import Rectangle from "./Rectangle";
-import { Color } from "../../algorithms/treemap/squarified";
 import Point from "./Point";
-import VisualNode from "./VisualNode";
+import VisualNode, { Color } from "./VisualNode";
 
 export enum Order {
     leftToRight = 0,
