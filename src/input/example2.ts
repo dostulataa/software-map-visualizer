@@ -53,39 +53,11 @@ export default {
 
                         {
                             "name": "fourthNodesSecondChild",
-                            "type": "Folder",
+                            "type": "File",
                             "attributes": {
                                 "rloc": 300
                             },
-                            "children": [
-                                {
-                                    "name": "file1",
-                                    "type": "File",
-                                    "attributes": {
-                                        "rloc": 120
-                                    },
-                                    "children": [],
-                                    "link": "http://www.google.de"
-                                },
-                                {
-                                    "name": "file2",
-                                    "type": "File",
-                                    "attributes": {
-                                        "rloc": 100
-                                    },
-                                    "children": [],
-                                    "link": "http://www.google.de"
-                                },
-                                {
-                                    "name": "file3",
-                                    "type": "File",
-                                    "attributes": {
-                                        "rloc": 80
-                                    },
-                                    "children": [],
-                                    "link": "http://www.google.de"
-                                }
-                            ],
+                            "children": [],
                             "link": "http://www.google.de"
                         },
                         {
@@ -120,31 +92,11 @@ export default {
                 },
                 {
 					"name": "seventhNode",
-					"type": "Folder",
+					"type": "File",
 					"attributes": {
 						"rloc": 100
 					},
-                    "children": [
-                        {
-                            "name": "seventhNodesFirstChild",
-                            "type": "File",
-                            "attributes": {
-                                "rloc": 60
-                            },
-                            "children": [],
-                            "link": "http://www.google.de"
-                        },
-                        {
-                            "name": "seventhNodesSecondChild",
-                            "type": "File",
-                            "attributes": {
-                                "rloc": 40
-                            },
-                            "children": [],
-                            "link": "http://www.google.de"
-                        },
-
-                    ],
+                    "children": [],
 					"link": "http://www.google.de"
 				},
 			]

@@ -24,7 +24,6 @@ export default class HorizontalStreet extends Box {
     }
 
     public calculateDimension(metric: string): void {
-        //Calculate dimensions of all children
         for (const child of this.children) {
             child.calculateDimension(metric);
         }
@@ -32,12 +31,11 @@ export default class HorizontalStreet extends Box {
         this.splitChildrenToRows(this.children);
         this.rearrangeRows();
 
-        //Set width and hight of box
         this.width = Math.max(this.getLength(this.topRow), this.getLength(this.bottomRow));
         this.height = this.getMaxHeight(this.topRow) + this.getStreetHeight() + this.getMaxHeight(this.bottomRow) + 2 * this.SPACER;
     }
 
-    public layout(origin: Point): VisualNode[] {
+    public layout(origin: Point = new Point(0, 0)): VisualNode[] {
         const maxTopHeight = this.getMaxHeight(this.topRow);
         const topRowNodes = this.layoutTopRow(origin, maxTopHeight);
         const streetNode = this.layoutStreet(origin, maxTopHeight);

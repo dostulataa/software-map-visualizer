@@ -24,7 +24,6 @@ export default class VerticalStreet extends Box {
     }
 
     public calculateDimension(metric: string): void {
-        //Calculate dimensions of all children
         for (const child of this.children) {
             child.calculateDimension(metric);
         }
@@ -32,12 +31,11 @@ export default class VerticalStreet extends Box {
         this.splitChildrenToRows(this.children);
         this.rearrangeRows();
 
-        //Set width and height of box
         this.width = this.getMaxWidth(this.leftRow) + this.getStreetWidth() + this.getMaxWidth(this.rightRow) + 2 * this.SPACER;
         this.height = Math.max(this.getLength(this.leftRow), this.getLength(this.rightRow));
     }
 
-    public layout(origin: Point): VisualNode[] {
+    public layout(origin: Point = new Point(0, 0)): VisualNode[] {
         const maxLeftWidth = this.getMaxWidth(this.leftRow);
         const leftRowNodes = this.layoutLeftRow(origin, maxLeftWidth);
         const streetNode = this.layoutStreet(origin, maxLeftWidth);

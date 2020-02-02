@@ -3,7 +3,7 @@ import HorizontalStreet from "../models/streetMap/HorizontalStreet";
 import House from "../models/streetMap/House";
 import VerticalStreet from "../models/streetMap/VerticalStreet";
 import Box from "../models/streetMap/Box";
-import Treemap from "../models/streetMap/Treemap";
+import StripTreemap from "../models/Treemap/StripTreemap";
 
 enum StreetOrientation { Horizontal, Vertical };
 
@@ -33,8 +33,8 @@ function createBoxes(node: CCNode, orientation: StreetOrientation, metric: strin
             if(child.size(metric) === 0) {
                 continue;
             }
-            if(depth >= 5) {
-                children.push(new Treemap(child, metric));
+            if(depth >= Infinity) {
+                children.push(new StripTreemap(child, metric));
             } else {
                 children.push(orientation === StreetOrientation.Horizontal
                     ? new VerticalStreet(child, createBoxes(child, 1 - orientation, metric, depth + 1), depth + 1)

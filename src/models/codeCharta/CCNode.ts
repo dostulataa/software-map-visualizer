@@ -43,6 +43,7 @@ export default class CCNode {
      */
     public scaledSize(metric: string, parentSize: number, parentArea: number): number {
         const size = this.size(metric);
+        if(parentSize === 0) parentSize = 1;
         const scale = parentArea / parentSize;
         return scale * size;
     }
