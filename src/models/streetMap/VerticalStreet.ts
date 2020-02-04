@@ -12,7 +12,6 @@ export default class VerticalStreet extends Box {
     private leftRow: Box[] = [];
     private rightRow: Box[] = [];
     private depth: number;
-    private STREET_WIDTH = 10;
     private SPACER = 2;
     public orientation: VerticalOrientation;
 
@@ -168,6 +167,6 @@ export default class VerticalStreet extends Box {
     }
 
     private getStreetWidth(): number {
-        return this.depth > 4 ? 1 : -2 * this.depth + this.STREET_WIDTH;
+        return 10 / (this.depth + 1);
     }
 }

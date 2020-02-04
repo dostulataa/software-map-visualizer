@@ -12,7 +12,6 @@ export default class HorizontalStreet extends Box {
     private children: Box[] = [];
     private topRow: Box[] = [];
     private bottomRow: Box[] = [];
-    private STREET_HEIGHT = 10;
     private SPACER = 2;
     public orientation: HorizontalOrientation;
 
@@ -51,7 +50,7 @@ export default class HorizontalStreet extends Box {
     private layoutTopRow(origin: Point, maxTopHeight: number): VisualNode[] {
         const nodes: VisualNode[] = [];
         for (let i = 0; i < this.topRow.length; i++) {
-            const childOriginX = this.calculateChildOriginX(origin, i, this.topRow)
+            const childOriginX = this.calculateChildOriginX(origin, i, this.topRow);
             const childOriginY = this.calculateStreetOffsetY(origin, maxTopHeight) - this.topRow[i].height;
             const childOrigin = new Point(childOriginX, childOriginY);
             nodes.push.apply(nodes, this.topRow[i].layout(childOrigin));
@@ -67,7 +66,7 @@ export default class HorizontalStreet extends Box {
     private layoutStreet(origin: Point, maxTopHeight: number): VisualNode {
         const streetOffsetY = this.calculateStreetOffsetY(origin, maxTopHeight);
         const streetOrigin = new Point(origin.x, streetOffsetY);
-        const streetRectangle = new Rectangle(streetOrigin, this.width, this.getStreetHeight())
+        const streetRectangle = new Rectangle(streetOrigin, this.width, this.getStreetHeight());
         return new VisualNode(streetRectangle, this.node, Color.Folder);
     }
 
@@ -81,7 +80,7 @@ export default class HorizontalStreet extends Box {
         for (let i = 0; i < this.bottomRow.length; i++) {
             const childOriginX = this.calculateChildOriginX(origin, i, this.bottomRow);
             const childOriginY = this.calculateStreetOffsetY(origin, maxTopHeight) + this.getStreetHeight();
-            const childOrigin = new Point(childOriginX, childOriginY)
+            const childOrigin = new Point(childOriginX, childOriginY);
             nodes.push.apply(nodes, this.bottomRow[i].layout(childOrigin));
         }
         return nodes;
@@ -168,6 +167,6 @@ export default class HorizontalStreet extends Box {
     }
 
     private getStreetHeight(): number {
-        return this.depth > 4 ? 1 : -2 * this.depth + this.STREET_HEIGHT;
+        return 10 / (this.depth + 1);
     }
 }
