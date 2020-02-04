@@ -28,6 +28,3 @@ Visualization can be viewed in the browser on
 ```
 localhost:8080
 ```
-When you click a node its name and attributes are displayed. A new treemap can then be loaded by clicking on the metric to be used.
-
-In src/index.ts you can change the 'svg_width' and 'svg_height' to change the size of the visualization canvas.
