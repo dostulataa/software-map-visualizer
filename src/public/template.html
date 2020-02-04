@@ -16,6 +16,11 @@
     background-color: white;
   }
 
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+
   body {
     background-color: lightgrey;
   }
@@ -34,9 +39,42 @@
           </div>
           <div class="options">
             <div class="row">
-              <!-- <div class="col-md-2">Metrik:</div>
+              <div class="col-md-2">Metric:</div>
               <div class="spacer col-md-1"></div>
-              <div class="col-md-2"><input type="text" /></div> -->
+              <div class="col-md-2"><input type="text"/></div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Algorithm:</div>
+              <div class="spacer col-md-1"></div>
+              <div class="col-md-2">
+                <select>
+                  <option value="treemapStreet" selected="selected">StreetMap + Treemap</option>
+                  <option value="streetMap">StreetMap</option>
+                  <option value="strip">Strip Treemap</option>
+                  <option value="squarified">Squarified Treemap</option>
+                  <option value="sliceDice">Slice And Dice Treemap</option>
+                </select> 
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Depth:</div>
+              <div class="spacer col-md-1"></div>
+              <div class="col-md-2"><input type="number" name="depth" min="0" max="10" disabled/></div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Treemap:</div>
+              <div class="spacer col-md-1"></div>
+              <div class="col-md-2">
+                <select disabled>
+                  <option value="strip" selected="selected">Strip</option>
+                  <option value="squarified">Squarified</option>
+                  <option value="sliceDice">Slice And Dice</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="spacer col-md-7"></div>
+              <button type="button" class="redraw">Redraw</button>
             </div>
           </div>
         </div>
@@ -52,9 +90,42 @@
           </div>
           <div class="options">
             <div class="row">
-              <!-- <div class="col-md-2">Metrik:</div>
+              <div class="col-md-2">Metric:</div>
               <div class="spacer col-md-1"></div>
-              <div class="col-md-2"><input type="text" /></div> -->
+              <div class="col-md-2"><input type="text"/></div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Algorithm:</div>
+              <div class="spacer col-md-1"></div>
+              <div class="col-md-2">
+                <select>
+                  <option value="treemapStreet" selected="selected">StreetMap + Treemap</option>
+                  <option value="streetMap">StreetMap</option>
+                  <option value="strip">Strip Treemap</option>
+                  <option value="squarified">Squarified Treemap</option>
+                  <option value="sliceDice">Slice And Dice Treemap</option>
+                </select> 
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Depth:</div>
+              <div class="spacer col-md-1"></div>
+              <div class="col-md-2"><input type="number" name="depth" min="0" max="10" disabled></div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Treemap:</div>
+              <div class="spacer col-md-1"></div>
+              <div class="col-md-2">
+                <select disabled>
+                  <option value="strip" selected="selected">Strip</option>
+                  <option value="squarified">Squarified</option>
+                  <option value="sliceDice">Slice And Dice</option>
+                </select> 
+              </div>
+            </div>
+            <div class="row">
+              <div class="spacer col-md-7"></div>
+              <button type="button" class="redraw">Redraw</button>
             </div>
           </div>
         </div>
