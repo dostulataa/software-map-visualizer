@@ -26,14 +26,13 @@ export default function init(root: CCNode, metric: string): HorizontalStreet {
  */
 function createBoxes(node: CCNode, orientation: StreetOrientation, metric: string, depth: number): Box[] {
     const children: Box[] = [];
-    for (const child of node.children) {
+    for (let child of node.children) {
+        if (child.size(metric) === 0) continue;
         if (child.isFile()) {
             children.push(new House(child));
         } else {
-            if(child.size(metric) === 0) {
-                continue;
-            }
-            if(depth >= Infinity) {
+            child = mergeDirectories(child, metric);
+            if (depth >= 6) {
                 children.push(new StripTreemap(child, metric));
             } else {
                 children.push(orientation === StreetOrientation.Horizontal
@@ -43,4 +42,23 @@ function createBoxes(node: CCNode, orientation: StreetOrientation, metric: strin
         }
     }
     return children;
+}
+
+/**
+ * Condenses a folder with a child folder if they have the same size.
+ * @param node current node
+ * @param metric visualization's metric
+ */
+function mergeDirectories(node: CCNode, metric: string): CCNode {
+    for (const child of node.children) {
+        if(child.isFolder()) {
+            if (node.size(metric) === child.size(metric)) {
+                let name = node.name;
+                node = child;
+                node.name = name + "." + child.name;
+                break;
+            }
+        }
+    }
+    return node;
 }
