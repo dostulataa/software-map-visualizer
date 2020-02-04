@@ -1,8 +1,8 @@
 import validateInputFiles from "./Validation";
 import VisualNode, { Color } from "./models/visualization/VisualNode";
 import CCProject from "./models/codeCharta/CCProject";
-import firstInputProject from "./input/codeCharta";
-import secondInputProject from "./input/codecharta_2020-01-23_08-15.cc";
+import firstInputProject from "./input/junit5_2018-10-27.cc";
+import secondInputProject from "./input/junit5_2019-10-26.cc";
 import schema from "./schema";
 import { select, event, Selection, BaseType } from "d3-selection";
 import { zoom } from "d3-zoom";
