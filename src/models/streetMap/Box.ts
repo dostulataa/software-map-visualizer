@@ -15,14 +15,14 @@ export default abstract class Box {
     }
 
     /**
-     * Calculates height and width of the box and assigns nodes to rows.
-     * @param metric 
+     * Calculates height and width of the box.
+     * @param metric the used metric
      */
     public abstract calculateDimension(metric: string): void;
 
     /**
-     * Creates VisualizationNode for the box.
-     * @param origin 
+     * Creates corresponding VisualizationNode.
+     * @param origin upper left point of the box
      */
     public abstract layout(origin: Point): VisualNode[];
 }
