@@ -61,7 +61,7 @@ function colorizeOtherNode(codeVersionId: string, nodeId: string, color: string)
     const otherCodeVersionId = codeVersionId === "newVersion" ? "oldVersion" : "newVersion";
     const otherId = `#${otherCodeVersionId}-${nodeId}`;
     const otherNode = select(otherId);
-    if (!otherNode.empty()) otherNode.style("fill", color);
+    if (!otherNode.empty()) { otherNode.style("fill", color) };
 }
 
 function registerZoomBehavior(visualization: Selection<BaseType, unknown, HTMLElement, any>) {

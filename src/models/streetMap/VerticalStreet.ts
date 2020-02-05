@@ -207,7 +207,7 @@ export default class VerticalStreet extends Box {
      * Calculates upper side overhang of a street.
      * @param streetOrigin topleft point of street
      */
-    calculateTopStreetOverhang(streetOrigin: Point): number {
+    private calculateTopStreetOverhang(streetOrigin: Point): number {
         const firstLeftNode = this.leftRow[0];
         const firstRightNode = this.rightRow[0];
         const leftOverhang = firstLeftNode instanceof HorizontalStreet ? firstLeftNode.streetRect!.topLeft.y - streetOrigin.y : 0;
@@ -223,7 +223,7 @@ export default class VerticalStreet extends Box {
      * Calculates bottom side overhang of a street.
      * @param streetOrigin topleft point of street
      */
-    calculateBottomStreetOverhang(streetOrigin: Point): number {
+    private calculateBottomStreetOverhang(streetOrigin: Point): number {
         const lastLeftNode = this.leftRow[this.leftRow.length - 1];
         const lastRightNode = this.rightRow[this.rightRow.length - 1];
         const streetBottomY = streetOrigin.y + this.height;

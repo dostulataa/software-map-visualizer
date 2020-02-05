@@ -17,7 +17,7 @@ export default class SquarifiedTreemap extends Treemap {
         const rootNode = new VisualNode(rectangle, this.node, Color.Folder);
         this.treemapNodes.push(rootNode);
         const children = this.node.children.filter((value) => { return value.size(this.metric) > 0 });
-        if (children.length === 0) return this.treemapNodes;
+        if (children.length === 0) { return this.treemapNodes };
         this.createNodes(children, rectangle, this.node.size(this.metric));
         return this.treemapNodes;
     }
@@ -26,19 +26,19 @@ export default class SquarifiedTreemap extends Treemap {
         let processed = 0;
         let currentRect = new Rectangle(new Point(rect.topLeft.x, rect.topLeft.y), rect.width, rect.height);
         let currentRootSize = rootSize;
-        nodes = this.sort(nodes);
+        let sortedNodes = this.sort(nodes);
 
         do {
-            const currentStrip = this.createStrip(currentRect, nodes.slice(processed), currentRootSize);
+            const currentStrip = this.createStrip(currentRect, sortedNodes.slice(processed), currentRootSize);
             const stripSize = currentStrip.totalSize(this.metric);
             if (stripSize > 0) {
                 const stripNodes = this.createStripNodes(currentStrip, currentRect, currentRootSize);
                 this.createChildrenNodes(stripNodes);
                 currentRect = this.remainingRectangle(currentRect, currentStrip, currentRootSize, currentRect.area());
                 currentRootSize -= stripSize;
-            }   
+            }
             processed += currentStrip.nodes.length;
-        } while (processed < nodes.length); /* as long as there are children to process */
+        } while (processed < sortedNodes.length); /* as long as there are children to process */
     }
 
     protected createStrip(rect: Rectangle, nodes: CCNode[], rootSize: number): Strip {
@@ -82,7 +82,7 @@ export default class SquarifiedTreemap extends Treemap {
             }
         }
     }
-    
+
     private sort(nodes: CCNode[]): CCNode[] {
         return nodes.sort((a, b) => { return b.size(this.metric) - a.size(this.metric) });
     }

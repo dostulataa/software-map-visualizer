@@ -27,7 +27,7 @@ export default function init(root: CCNode, metric: string): HorizontalStreet {
 function createBoxes(node: CCNode, orientation: StreetOrientation, metric: string, depth: number): Box[] {
     const children: Box[] = [];
     for (let child of node.children) {
-        if (child.size(metric) === 0) continue;
+        if (child.size(metric) === 0) { continue };
         if (child.isFile()) {
             children.push(new House(child));
         } else {
@@ -50,15 +50,16 @@ function createBoxes(node: CCNode, orientation: StreetOrientation, metric: strin
  * @param metric visualization's metric
  */
 function mergeDirectories(node: CCNode, metric: string): CCNode {
+    let mergedNode = node;
     for (const child of node.children) {
         if(child.isFolder()) {
-            if (node.size(metric) === child.size(metric)) {
+            if (mergedNode.size(metric) === child.size(metric)) {
                 let name = node.name;
-                node = child;
-                node.name = name + "." + child.name;
+                mergedNode = child;
+                mergedNode.name = name + "." + child.name;
                 break;
             }
         }
     }
-    return node;
+    return mergedNode;
 }
