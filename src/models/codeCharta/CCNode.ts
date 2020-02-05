@@ -60,37 +60,38 @@ export default class CCNode {
      * @param data json data to create a Node from
      */
     public static create(data: any): CCNode {
+        let mergedData = data;
         let name = data.name;
 
         //skip folders with only one folder child and concat names
-        while(data.children.length === 1 && data.children[0].type === "Folder") {
-            name += "." + data.children[0].name;
-            data = data.children[0];
+        while(mergedData.children.length === 1 && mergedData.children[0].type === "Folder") {
+            name += "." + mergedData.children[0].name;
+            mergedData = mergedData.children[0];
         }
 
         const attributes: Map<string, number> = new Map();
-        for (const key of Object.keys(data.attributes)) {
-            attributes.set(key, Number(data.attributes[key]));
+        for (const key of Object.keys(mergedData.attributes)) {
+            attributes.set(key, Number(mergedData.attributes[key]));
         }
 
         let id: number | undefined = undefined;
-        if (data.id !== undefined) {
-            id = Number(data.id);
+        if (mergedData.id !== undefined) {
+            id = Number(mergedData.id);
         }
 
         let children: CCNode[] = [];
-        if (data.children !== undefined && data.children.length > 0) {
-            for (const child of data.children) {
+        if (mergedData.children !== undefined && mergedData.children.length > 0) {
+            for (const child of mergedData.children) {
                 const newChild: CCNode = CCNode.create(child);
                 children.push(newChild);
             }
         }
 
         let link: string | undefined = undefined;
-        if (data.link !== undefined) {
-            link = data.link;
+        if (mergedData.link !== undefined) {
+            link = mergedData.link;
         }
 
-        return new CCNode(name, data.type, attributes, children, id, link);
+        return new CCNode(name, mergedData.type, attributes, children, id, link);
     }
 }
