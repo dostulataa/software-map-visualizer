@@ -28,4 +28,8 @@ export default class Rectangle {
     public area(): number {
         return this.width * this.height;
     }
+
+    public getBottomRight(): Point {
+        return new Point(this.topLeft.x + this.width, this.topLeft.y + this.height);
+    }
 }
