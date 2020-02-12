@@ -1,136 +1,96 @@
 import validateInputFiles from "./Validation";
-import VisualNode, { Color } from "./models/visualization/VisualNode";
 import CCProject from "./models/codeCharta/CCProject";
 import firstInputProject from "./input/junit5_2018-10-27.cc";
 import secondInputProject from "./input/junit5_2019-10-26.cc";
 import schema from "./schema";
-import { select, event, Selection, BaseType } from "d3-selection";
-import { zoom } from "d3-zoom";
-import streetMap from "./algorithms/streetMap";
+import { select, Selection, BaseType } from "d3-selection";
+import Visualization, { TreemapAlgorithm } from "./models/visualization/Visualization";
+import { Layout } from "./models/visualization/Visualization";
 
-const inputFiles = [firstInputProject, secondInputProject];
-validateInputFiles(schema, inputFiles);
-const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
+const svgWidth = window.innerWidth / 2.5;
+const svgHeight = window.innerHeight / 1.5;
 
-createVisualization(projects[0], .3, "oldVersion");
-createVisualization(projects[1], .3, "newVersion");
+init();
 
 /**
- * Creates the Visualization using d3 for drawing
- * @param project the project that should be visualized
- * @param metric the metric to determine a nodes size
- * @param leafMargin margin for leaf nodes to make underlying nodes visible
- * @param versionId id of the version column
+ * Creates and initializes both visualizations with default values.
  */
-function createVisualization(project: CCProject, leafMargin: number, versionId: string, metric: string = "rloc") {
-    const codeVersion = select("#" + versionId);
-    const svgWidth = window.innerWidth / 2.5;
-    const svgHeight = window.innerHeight / 1.5;
-    const nodes = createStreetNodes(project, metric);
+function init() {
+    const inputFiles = [firstInputProject, secondInputProject];
+    validateInputFiles(schema, inputFiles);
+    const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
 
-    createTitle(codeVersion, project.projectName);
-    createSVG(svgWidth, svgHeight, codeVersion);
-    drawNodes(nodes, codeVersion, metric, leafMargin);
+    const leftVersion = select("#oldVersion");
+    const rightVersion = select("#newVersion");
+
+    createTitle(leftVersion, projects[0].projectName);
+    createTitle(rightVersion, projects[1].projectName);
+
+    const leftVis = new Visualization(projects[0]);
+    const rightVis = new Visualization(projects[1]);
+
+    registerRedrawButtonHandler(leftVersion, leftVis);
+    registerRedrawButtonHandler(rightVersion, rightVis);
+
+    leftVis.createSVG(svgWidth, svgHeight, leftVersion);
+    rightVis.createSVG(svgWidth, svgHeight, rightVersion);
+    leftVis.draw(leftVersion, Layout.Street, "rloc");
+    rightVis.draw(rightVersion, Layout.Street, "rloc");
 }
 
-/**
- * Handles mouse going in or out of a node. Reverts color back to original color.
- * 
- * @param visualNode node which event is registered on 
- */
-function handleMouseEvent(visualNode: VisualNode) {
-    let color = visualNode.color;
-    if (event.type === "mouseover") {
-        color = Color.Highlighted;
-    }
-    select(event.currentTarget).style("fill", color);
-    const codeVersion = select(event.currentTarget.closest(".codeVersion"));
-    const codeVersionId = codeVersion.attr("id");
-    const nodeId = DOMifyId(visualNode.node.name)
-    colorizeOtherNode(codeVersionId, nodeId, color);
-}
-
-/**
- * colorizes the node with same name (if it exists) in other visualization version
- * 
- * @param codeVersionId the code version id where event node lies 
- * @param nodeId id of event node
- * @param color color to be used
- */
-function colorizeOtherNode(codeVersionId: string, nodeId: string, color: string) {
-    const otherCodeVersionId = codeVersionId === "newVersion" ? "oldVersion" : "newVersion";
-    const otherId = `#${otherCodeVersionId}-${nodeId}`;
-    const otherNode = select(otherId);
-    if (!otherNode.empty()) { otherNode.style("fill", color) };
-}
-
-function registerZoomBehavior(visualization: Selection<BaseType, unknown, HTMLElement, any>) {
-    const typedVisualization = visualization as Selection<Element, unknown, HTMLElement, any>;
-    const svg = typedVisualization.select("svg");
-    const zoomBehavior = zoom().scaleExtent([.1, 15]).on("zoom", () => {
-        svg
-            .selectAll("rect.visualNode")
-            .attr("transform", event.transform.toString());
+function registerRedrawButtonHandler(version: Selection<BaseType, unknown, HTMLElement, any>, visualization: Visualization) {
+    version.select("button.redraw").on("click", () => {
+        const metric = getMetric(version);
+        const layout = getLayout(version);
+        const depth = getDepth(version);
+        const treemapAlgorithm = getTreemapAlgorithm(version);
+        version.select("svg").remove();
+        visualization.createSVG(svgWidth, svgHeight, version);
+        visualization.draw(version, layout, metric, treemapAlgorithm, depth);
     });
-    typedVisualization.call(zoomBehavior);
 }
 
-// function createTreemapNodes(project: CCProject, width: number, height: number, metric: string): VisualNode[] {
-//     const tm = new StripTreemap(project.nodes[0], metric);
-//     tm.setDimensions(width, height);
-//     return tm.layout();
-// }
-
-function createStreetNodes(project: CCProject, metric: string): VisualNode[] {
-    const rootStreet = streetMap(project.nodes[0], metric);
-    return rootStreet.layout();
+function getMetric(version: Selection<BaseType, unknown, HTMLElement, any>): string {
+    const metricOption = version.select(".metricOption").node() as HTMLSelectElement;
+    return metricOption.value;
 }
 
-function createSVG(svgWidth: number, svgHeight: number, codeVersion: Selection<BaseType, unknown, HTMLElement, any>) {
-    const visualization = codeVersion.select(".visualization");
-    const svgId = `svg-${codeVersion.attr("id")}`;
+function getLayout(version: Selection<BaseType, unknown, HTMLElement, any>): Layout {
+    const layoutOptions = version.select(".layoutOption").node() as HTMLSelectElement;
+    const selectedLayout = layoutOptions.options[layoutOptions.selectedIndex].value;
 
-    const svg = visualization
-        .append("svg")
-        .attr("id", svgId)
-        .attr("width", svgWidth)
-        .attr("height", svgHeight);
-
-    registerZoomBehavior(visualization);
-
-    return svg;
+    switch (selectedLayout) {
+        case "streetLayout":
+            return Layout.Street;
+        case "treemap":
+            return Layout.Treemap;
+        case "treemapStreet":
+            return Layout.TreemapStreet;
+    }
+    return Layout.Street;
 }
 
-function drawNodes(nodes: VisualNode[], codeVersion: Selection<BaseType, unknown, HTMLElement, any>, metric: string, leafMargin: number): void {
-    const codeVersionId = codeVersion.attr("id");
-    codeVersion.select("svg")
-        .selectAll("rect")
-        .data(nodes)
-        .enter()
-        .append('rect')
-        .attr("class", "visualNode")
-        .attr("id", (d: VisualNode): string => { return `${codeVersionId}-${DOMifyId(d.node.name)}` })
-        .attr("x", (d: VisualNode): number => { return d.rectangle.topLeft.x + (d.isFile() && d.rectangle.height > leafMargin ? leafMargin : 0) })
-        .attr("y", (d: VisualNode): number => { return d.rectangle.topLeft.y + (d.isFile() && d.rectangle.width > leafMargin ? leafMargin : 0) })
-        .attr("height", (d: VisualNode): number => { return d.rectangle.height - (d.isFile() && d.rectangle.height > 2 * leafMargin ? 2 * leafMargin : 0) })
-        .attr("width", (d: VisualNode): number => { return d.rectangle.width - (d.isFile() && d.rectangle.width > 2 * leafMargin ? 2 * leafMargin : 0) })
-        .style("fill", (d: VisualNode): Color => { return d.color })
-        .on("mouseover", handleMouseEvent)
-        .on("mouseout", handleMouseEvent)
-        .append("svg:title").text((d: VisualNode): string => { return `${d.node.name}\n${metric}: ${d.node.size(metric)}` });
+function getDepth(version: Selection<BaseType, unknown, HTMLElement, any>): number {
+    const selectedDepth = version.select(".depthOption").node() as HTMLInputElement;
+    return Number(selectedDepth.value);
+}
+
+function getTreemapAlgorithm(version: Selection<BaseType, unknown, HTMLElement, any>): TreemapAlgorithm {
+    const treemapOptions = version.select(".treemapOption").node() as HTMLSelectElement;
+    const selectedTreemapAlgorithm = treemapOptions.options[treemapOptions.selectedIndex].value;
+
+    switch (selectedTreemapAlgorithm) {
+        case "strip":
+            return TreemapAlgorithm.Strip;
+        case "squarified":
+            return TreemapAlgorithm.Squarified;
+        default:
+            return TreemapAlgorithm.SliceAndDice;
+    }
 }
 
 function createTitle(codeVersion: Selection<BaseType, unknown, HTMLElement, any>, name: string): void {
     codeVersion
         .select(".title")
         .text(name);
-}
-
-/**
- * Replaces all '/' and '.' in a string with '-'.
- * Makes IDs useable as DOM Element id
- * @param name 
- */
-function DOMifyId(name: string): string {
-    return name.replace(/\.|\//g, "-");
 }
