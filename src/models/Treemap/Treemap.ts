@@ -1,4 +1,4 @@
-import Box from "../streetMap/Box"
+import Box from "../streetLayout/Box"
 import Point from "../visualization/Point";
 import VisualNode, { Color } from "../visualization/VisualNode";
 import CCNode from "../codeCharta/CCNode";
