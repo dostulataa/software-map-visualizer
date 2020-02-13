@@ -10,7 +10,7 @@ export default class StripTreemap extends SquarifiedTreemap {
         super(rootNode, metric);
     }
 
-    protected createNodes(nodes: CCNode[], rect: Rectangle, rootSize: number) {
+    protected createNodes(nodes: CCNode[], rect: Rectangle, rootSize: number): void {
         let processed = 0;
         let currentRect = new Rectangle(new Point(rect.topLeft.x, rect.topLeft.y), rect.width, rect.height);
         let currentRootSize = rootSize;

@@ -13,8 +13,8 @@ export default class Treemap extends Box {
         this.metric = metric;
     }
 
-    public calculateDimension(): void {
-        const size = this.node.size(this.metric);
+    public calculateDimension(metric: string): void {
+        const size = this.node.size(metric);
         this.width = Math.sqrt(size);
         this.height = Math.sqrt(size);
     }
@@ -32,7 +32,7 @@ export default class Treemap extends Box {
         this.height = height;
     }
 
-    private sliceAndDice(root: CCNode, topLeft: [number, number], bottomRight: [number, number], axis: number) {
+    private sliceAndDice(root: CCNode, topLeft: [number, number], bottomRight: [number, number], axis: number): void {
         let newTopLeft: [number, number] = [topLeft[0], topLeft[1]];
         let newBottomRight: [number, number] = [bottomRight[0], bottomRight[1]];
         const color = root.isFile() ? Color.File : Color.Folder;

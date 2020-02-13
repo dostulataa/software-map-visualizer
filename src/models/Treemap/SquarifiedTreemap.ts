@@ -22,7 +22,7 @@ export default class SquarifiedTreemap extends Treemap {
         return this.treemapNodes;
     }
 
-    protected createNodes(nodes: CCNode[], rect: Rectangle, rootSize: number) {
+    protected createNodes(nodes: CCNode[], rect: Rectangle, rootSize: number): void {
         let processed = 0;
         let currentRect = new Rectangle(new Point(rect.topLeft.x, rect.topLeft.y), rect.width, rect.height);
         let currentRootSize = rootSize;
@@ -73,7 +73,7 @@ export default class SquarifiedTreemap extends Treemap {
         return stripNodes;
     }
 
-    protected createChildrenNodes(stripNodes: VisualNode[]) {
+    protected createChildrenNodes(stripNodes: VisualNode[]): void {
         for (let node of stripNodes) {
             const children = node.node.children.filter((node) => { return node.size(this.metric) > 0 });
             if (children.length > 0) {

@@ -4,17 +4,16 @@ import Rectangle from "../visualization/Rectangle";
 import VisualNode, { Color } from "../visualization/VisualNode";
 import Box from "./Box";
 import VerticalStreet, { VerticalOrientation } from "./VerticalStreet";
+import Street from "./Street";
 
 export enum HorizontalOrientation { RIGHT, LEFT }
 
-export default class HorizontalStreet extends Box {
+export default class HorizontalStreet extends Street {
     private children: Box[] = [];
-    public topRow: Box[] = [];
-    public bottomRow: Box[] = [];
-    public streetRect: Rectangle | undefined;
-    private depth: number;
-    private SPACER = 2;
+    protected topRow: Box[] = [];
+    protected bottomRow: Box[] = [];
     public orientation: HorizontalOrientation;
+    protected depth: number;
 
     constructor(node: CCNode, children: Box[], depth: number, orientation: HorizontalOrientation = HorizontalOrientation.RIGHT) {
         super(node);
@@ -36,7 +35,7 @@ export default class HorizontalStreet extends Box {
         this.rearrangeRows();
 
         this.width = Math.max(this.getLength(this.topRow), this.getLength(this.bottomRow));
-        this.height = this.getMaxHeight(this.topRow) + this.getStreetHeight() + this.getMaxHeight(this.bottomRow) + 2 * this.SPACER;
+        this.height = this.getMaxHeight(this.topRow) + this.getStreetThickness() + this.getMaxHeight(this.bottomRow) + 2 * this.spacer;
     }
 
     public layout(origin: Point = new Point(0, 0)): VisualNode[] {
@@ -73,13 +72,13 @@ export default class HorizontalStreet extends Box {
      * @param origin origin of local coordinate system
      * @param maxTopHeight highest node in top row
      */
-    private layoutStreet(origin: Point, maxTopHeight: number): VisualNode {
+    protected layoutStreet(origin: Point, maxTopHeight: number): VisualNode {
         const streetOffsetY = this.calculateStreetOffsetY(origin, maxTopHeight);
         const streetOrigin = new Point(origin.x, streetOffsetY);
         const streetOverhang = this.calculateStreetOverhang(streetOrigin);
         const streetWidth = this.width - streetOverhang;
         streetOrigin.x += this.orientation === HorizontalOrientation.LEFT ? streetOverhang : 0;
-        this.streetRect = new Rectangle(streetOrigin, streetWidth, this.getStreetHeight());
+        this.streetRect = new Rectangle(streetOrigin, streetWidth, this.getStreetThickness());
         return new VisualNode(this.streetRect, this.node, Color.Folder);
     }
 
@@ -97,7 +96,7 @@ export default class HorizontalStreet extends Box {
         }
         for (let i = 0; i < this.bottomRow.length; i++) {
             const childOriginX = this.calculateChildOriginX(rowOrigin, i, this.bottomRow);
-            const childOriginY = this.calculateStreetOffsetY(rowOrigin, maxTopHeight) + this.getStreetHeight();
+            const childOriginY = this.calculateStreetOffsetY(rowOrigin, maxTopHeight) + this.getStreetThickness();
             const childOrigin = new Point(childOriginX, childOriginY);
             nodes.push.apply(nodes, this.bottomRow[i].layout(childOrigin));
         }
@@ -120,7 +119,7 @@ export default class HorizontalStreet extends Box {
      * @param maxLeftWidth highest node in topRow
      */
     private calculateStreetOffsetY(origin: Point, maxTopHeight: number): number {
-        return origin.y + this.SPACER + maxTopHeight;
+        return origin.y + this.spacer + maxTopHeight;
     }
 
     /**
@@ -148,7 +147,7 @@ export default class HorizontalStreet extends Box {
      * Divides children nodes into top- and bottomrow
      * @param children children of the current node
      */
-    private splitChildrenToRows(children: Box[]): void {
+    protected splitChildrenToRows(children: Box[]): void {
         const totalLength = this.getLength(children);
         let sum = 0;
 
@@ -168,7 +167,7 @@ export default class HorizontalStreet extends Box {
     /**
      * Arranges rows according to their orientation
      */
-    private rearrangeRows(): void {
+    protected rearrangeRows(): void {
         if (this.orientation === HorizontalOrientation.RIGHT) {
             this.bottomRow = this.bottomRow.reverse();
         } else {
@@ -180,22 +179,15 @@ export default class HorizontalStreet extends Box {
      * Gets the highest box of an array of boxes.
      * @param boxes boxes to be checked
      */
-    public getMaxHeight(boxes: Box[]): number {
+    private getMaxHeight(boxes: Box[]): number {
         return boxes.reduce((max, n) => Math.max(max, n.height), Number.MIN_VALUE);
-    }
-
-    /**
-     * Calculates street height depending the node's depth in the project
-     */
-    private getStreetHeight(): number {
-        return 10 / (this.depth + 1);
     }
 
     /**
      * Calculates overhang of a street.
      * @param streetOrigin topleft point of street
      */
-    private calculateStreetOverhang(streetOrigin: Point): number {
+    protected calculateStreetOverhang(streetOrigin: Point): number {
         if (this.orientation === HorizontalOrientation.LEFT) {
             return this.calculateLeftStreetOverhang(streetOrigin);
         } else {

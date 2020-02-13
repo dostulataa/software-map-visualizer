@@ -6,7 +6,7 @@ import VisualNode from "../visualization/VisualNode";
  * Bounding box of an element in the street layout.
  */
 export default abstract class Box {
-    public node: CCNode;
+    protected node: CCNode;
     public height: number = 0;
     public width: number = 0;
 

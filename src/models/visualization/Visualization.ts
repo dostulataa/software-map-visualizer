@@ -70,7 +70,7 @@ export default class Visualization {
                 treemap = new Treemap(rootNode, metric);
                 break;
         }
-        treemap.calculateDimension();
+        treemap.calculateDimension(metric);
         return treemap.layout();
     }
 
