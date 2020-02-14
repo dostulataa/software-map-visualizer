@@ -200,15 +200,16 @@ export default class HorizontalStreet extends Street {
      * @param streetOrigin topleft point of street
      */
     private calculateLeftStreetOverhang(streetOrigin: Point): number {
-        const firstTopNode = this.topRow[0];
-        const firstBottomNode = this.bottomRow[0];
-        const topOverhang = firstTopNode instanceof VerticalStreet ? firstTopNode.streetRect!.topLeft.x - streetOrigin.x : 0;
-        const bottomOverhang = firstBottomNode instanceof VerticalStreet ? firstBottomNode.streetRect!.topLeft.x - streetOrigin.x : 0;
-        if (topOverhang > 0 && bottomOverhang > 0) {
-            return Math.min(topOverhang, bottomOverhang);
-        } else {
-            return Math.max(topOverhang, bottomOverhang);
-        }
+        const firstTopBox = this.topRow[0];
+        const firstBottomBox = this.bottomRow[0];
+        const topOverhang = firstTopBox instanceof VerticalStreet 
+            ? firstTopBox.streetRect!.topLeft.x - streetOrigin.x 
+            : this.width - this.getLength(this.topRow);
+        const bottomOverhang = firstBottomBox instanceof VerticalStreet 
+            ? firstBottomBox.streetRect!.topLeft.x - streetOrigin.x 
+            : this.width - this.getLength(this.bottomRow);
+
+        return topOverhang > 0 && bottomOverhang > 0 ? Math.min(topOverhang, bottomOverhang) : 0;
     }
 
     /**
@@ -216,15 +217,16 @@ export default class HorizontalStreet extends Street {
      * @param streetOrigin topleft point of street
      */
     private calculateRightStreetOverhang(streetOrigin: Point): number {
-        const lastTopNode = this.topRow[this.topRow.length - 1];
-        const lastBottomNode = this.bottomRow[this.bottomRow.length - 1];
-        const streetBottomX = streetOrigin.x + this.width;
-        const topOverhang = lastTopNode instanceof VerticalStreet ? streetBottomX - lastTopNode.streetRect!.getBottomRight().x : 0;
-        const bottomOverhang = lastBottomNode instanceof VerticalStreet ? streetBottomX - lastBottomNode.streetRect!.getBottomRight().x : 0;
-        if (topOverhang > 0 && bottomOverhang > 0) {
-            return Math.min(topOverhang, bottomOverhang);
-        } else {
-            return Math.max(topOverhang, bottomOverhang);
-        }
+        const lastTopBox = this.topRow[this.topRow.length - 1];
+        const lastBottomBox = this.bottomRow[this.bottomRow.length - 1];
+        const streetRightX = streetOrigin.x + this.width;
+        const topOverhang = lastTopBox instanceof VerticalStreet 
+            ? streetRightX - lastTopBox.streetRect!.getBottomRight().x 
+            : this.width - this.getLength(this.topRow);
+        const bottomOverhang = lastBottomBox instanceof VerticalStreet 
+            ? streetRightX - lastBottomBox.streetRect!.getBottomRight().x 
+            : this.width - this.getLength(this.bottomRow);
+
+        return topOverhang > 0 && bottomOverhang > 0 ? Math.min(topOverhang, bottomOverhang) : 0;
     }
 }
