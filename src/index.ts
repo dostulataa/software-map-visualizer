@@ -90,7 +90,8 @@ function getTreemapAlgorithm(version: Selection<BaseType, unknown, HTMLElement, 
 }
 
 function createTitle(codeVersion: Selection<BaseType, unknown, HTMLElement, any>, name: string): void {
+    const projectName = name !== "" ? name : "Unnamed Project";
     codeVersion
         .select(".title")
-        .text(name);
+        .text(projectName);
 }
