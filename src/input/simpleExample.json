@@ -1,4 +1,4 @@
-export default {
+{
 	"projectName": "Simple Project",
 	"apiVersion": "1.1",
 	"nodes": [
@@ -12,14 +12,14 @@ export default {
 					"type": "File",
 					"attributes": {
 						"rloc": 12
-					},
+					}
                 },
                 {
 					"name": "8",
 					"type": "File",
 					"attributes": {
 						"rloc": 8
-					},
+					}
                 },
                 {
 					"name": "parent1",
@@ -31,36 +31,36 @@ export default {
                             "type": "File",
                             "attributes": {
                                 "rloc": 2
-                            },
+                            }
                         },
                         {
                             "name": "2",
                             "type": "File",
                             "attributes": {
                                 "rloc": 2
-                            },
+                            }
                         },
                         {
                             "name": "2",
                             "type": "File",
                             "attributes": {
                                 "rloc": 2
-                            },
+                            }
                         },
                         {
                             "name": "3",
                             "type": "File",
                             "attributes": {
                                 "rloc": 3
-                            },
+                            }
                         },
                         {
                             "name": "1",
                             "type": "File",
                             "attributes": {
                                 "rloc": 1
-                            },
-                        },
+                            }
+                        }
                     ]
                 },
                 {
@@ -78,22 +78,22 @@ export default {
                                     "type": "File",
                                     "attributes": {
                                         "rloc": 6
-                                    },
+                                    }
                                 },
                                 {
                                     "name": "8",
                                     "type": "File",
                                     "attributes": {
                                         "rloc": 8
-                                    },
+                                    }
                                 },
                                 {
                                     "name": "11",
                                     "type": "File",
                                     "attributes": {
                                         "rloc": 11
-                                    },
-                                },
+                                    }
+                                }
                             ]
                         },
                         {
@@ -101,16 +101,16 @@ export default {
                             "type": "File",
                             "attributes": {
                                 "rloc": 5
-                            },
+                            }
                         },
                         {
                             "name": "40",
                             "type": "File",
                             "attributes": {
                                 "rloc": 40
-                            },
+                            }
                         }
-                    ],
+                    ]
                 }
 			]
 		}

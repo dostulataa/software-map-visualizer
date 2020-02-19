@@ -1,4 +1,4 @@
-export default {
+{
     "projectName": "CodeCharta:visualization 2019",
     "apiVersion": "1.1",
     "nodes": [

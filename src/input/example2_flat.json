@@ -1,4 +1,4 @@
-export default {
+{
 	"projectName": "Example Project 2",
 	"apiVersion": "1.0",
 	"nodes": [
@@ -69,7 +69,7 @@ export default {
 					},
                     "children": [],
 					"link": "http://www.google.de"
-				},
+				}
 			]
 		}
 	],
