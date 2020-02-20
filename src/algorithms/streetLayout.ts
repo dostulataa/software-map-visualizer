@@ -24,7 +24,7 @@ export default function init(root: CCNode, metric: string, treemapAlgorithm: Tre
 }
 
 /**
- * Creates boxes for a street.
+ * Creates boxes for street algorithm.
  * @param node current to create a box for
  * @param streetOrientation a child's street orientation
  */
@@ -69,7 +69,7 @@ function mergeDirectories(node: CCNode, metric: string): CCNode {
     return mergedNode;
 }
 
-function createTreemapBox(node: CCNode, metric: string, treemapAlgorithm: TreemapAlgorithm) {
+function createTreemapBox(node: CCNode, metric: string, treemapAlgorithm: TreemapAlgorithm): Treemap {
     switch (treemapAlgorithm) {
         case TreemapAlgorithm.SliceAndDice:
             return new SliceDiceTreemap(node, metric);
@@ -77,5 +77,7 @@ function createTreemapBox(node: CCNode, metric: string, treemapAlgorithm: Treema
             return new SquarifiedTreemap(node, metric);
         case TreemapAlgorithm.Strip:
             return new StripTreemap(node, metric);
+        default:
+            throw new Error("Treemap Algorithm not specified.");
     }
 }

@@ -5,8 +5,9 @@ import Point from "../visualization/Point";
 
 export default abstract class Street extends Box{
     public streetRect: Rectangle | undefined;
-    protected spacer: number = 2;
+    protected spacer = 2;
     protected abstract depth: number;
+    protected maxStreetThickness = 10;
 
     protected abstract layoutStreet(origin: Point, maxNodeSideLength: number): VisualNode;
 
@@ -17,6 +18,6 @@ export default abstract class Street extends Box{
     protected abstract rearrangeRows(): void;
 
     protected getStreetThickness(): number {
-        return 10 / (this.depth + 1);
+        return this.maxStreetThickness / (this.depth + 1);
     }
 }

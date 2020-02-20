@@ -21,7 +21,7 @@ export default abstract class Box {
     public abstract calculateDimension(metric: string): void;
 
     /**
-     * Creates corresponding VisualizationNode.
+     * Creates corresponding VisualNode.
      * @param origin upper left point of the box
      */
     public abstract layout(origin: Point): VisualNode[];

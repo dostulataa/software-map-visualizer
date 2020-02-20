@@ -15,30 +15,37 @@ export default class SquarifiedTreemap extends Treemap {
     public layout(origin: Point = new Point(0, 0)): VisualNode[] {
         const rectangle = new Rectangle(origin, this.width, this.height);
         const rootNode = new VisualNode(rectangle, this.node, Color.Folder);
+
         this.treemapNodes.push(rootNode);
-        const children = this.node.children.filter((value) => { return value.size(this.metric) > 0 });
-        if (children.length === 0) { return this.treemapNodes };
+
+        const children = this.node.children.filter(value => value.size(this.metric) > 0);
+
+        if (children.length === 0) {
+            return this.treemapNodes
+        };
         this.createNodes(children, rectangle, this.node.size(this.metric));
+
         return this.treemapNodes;
     }
 
     protected createNodes(nodes: CCNode[], rect: Rectangle, rootSize: number): void {
-        let processed = 0;
+        let processedNodesCount = 0;
         let currentRect = new Rectangle(new Point(rect.topLeft.x, rect.topLeft.y), rect.width, rect.height);
         let currentRootSize = rootSize;
-        let sortedNodes = this.sort(nodes);
+        let orderedNodes = this.orderBySizeDescending(nodes);
 
         do {
-            const currentStrip = this.createStrip(currentRect, sortedNodes.slice(processed), currentRootSize);
+            const currentStrip = this.createStrip(currentRect, orderedNodes.slice(processedNodesCount), currentRootSize);
             const stripSize = currentStrip.totalSize(this.metric);
+
             if (stripSize > 0) {
                 const stripNodes = this.createStripNodes(currentStrip, currentRect, currentRootSize);
                 this.createChildrenNodes(stripNodes);
                 currentRect = this.remainingRectangle(currentRect, currentStrip, currentRootSize, currentRect.area());
                 currentRootSize -= stripSize;
             }
-            processed += currentStrip.nodes.length;
-        } while (processed < sortedNodes.length); /* as long as there are children to process */
+            processedNodesCount += currentStrip.nodes.length;
+        } while (processedNodesCount < orderedNodes.length); /* as long as there are children to process */
     }
 
     protected createStrip(rect: Rectangle, nodes: CCNode[], rootSize: number): Strip {
@@ -46,15 +53,19 @@ export default class SquarifiedTreemap extends Treemap {
         const currentStrip = rect.isVertical()
             ? new HorizontalStrip([firstNode])
             : new VerticalStrip([firstNode]);
+
         currentStrip.populate(nodes.slice(1), rect, rootSize, this.metric);
+
         return currentStrip;
     }
 
     protected remainingRectangle(rect: Rectangle, strip: Strip, parentSize: number, parentArea: number): Rectangle {
         const stripSize = strip.totalScaledSize(strip.nodes, this.metric, parentSize, parentArea);
+
         let newOrigin: Point;
         let width = rect.width;
         let height = rect.height;
+
         if (strip instanceof HorizontalStrip) {
             const stripHeight = stripSize / rect.width;
             height -= stripHeight;
@@ -75,7 +86,7 @@ export default class SquarifiedTreemap extends Treemap {
 
     protected createChildrenNodes(stripNodes: VisualNode[]): void {
         for (let node of stripNodes) {
-            const children = node.node.children.filter((node) => { return node.size(this.metric) > 0 });
+            const children = node.node.children.filter(node => node.size(this.metric) > 0 );
             if (children.length > 0) {
                 const size = node.node.size(this.metric);
                 this.createNodes(children, node.rectangle, size);
@@ -83,7 +94,7 @@ export default class SquarifiedTreemap extends Treemap {
         }
     }
 
-    private sort(nodes: CCNode[]): CCNode[] {
+    private orderBySizeDescending(nodes: CCNode[]): CCNode[] {
         return nodes.sort((a, b) => { return b.size(this.metric) - a.size(this.metric) });
     }
 }

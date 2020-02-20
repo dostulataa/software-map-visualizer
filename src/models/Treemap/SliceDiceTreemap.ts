@@ -16,17 +16,20 @@ export default class SliceDiceTreemap extends Treemap {
         let topLeft: [number, number] = [rect.topLeft.x, rect.topLeft.y];
         let bottomRight: [number, number] = [rect.topLeft.x + rect.width, rect.topLeft.y + rect.height];
         this.sliceAndDice(this.node, topLeft, bottomRight, 0);
+
         return this.treemapNodes;
     }
 
     private sliceAndDice(root: CCNode, topLeft: [number, number], bottomRight: [number, number], axis: number): void {
         let newTopLeft: [number, number] = [topLeft[0], topLeft[1]];
         let newBottomRight: [number, number] = [bottomRight[0], bottomRight[1]];
+
         const color = root.isFile() ? Color.File : Color.Folder;
         const newOrigin = new Point(topLeft[0], topLeft[1]);
         const newWidth = bottomRight[0] - topLeft[0];
         const newHeight = bottomRight[1] - topLeft[1];
         const newRect = new Rectangle(newOrigin, newWidth, newHeight);
+
         this.treemapNodes.push(new VisualNode(newRect, root, color));
         
         //uses x or y coord depending on orientation of the rectangle
@@ -35,6 +38,7 @@ export default class SliceDiceTreemap extends Treemap {
         for (const child of root.children) {
             const rootSize = root.size(this.metric);
             const childSize = child.size(this.metric);
+            
             if (rootSize !== 0) {
                 //sets position of new rectangle
                 newBottomRight[axis] = newTopLeft[axis] + childSize / rootSize * width;

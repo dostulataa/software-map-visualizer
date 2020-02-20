@@ -1,14 +1,14 @@
 import validateInputFiles from "./Validation";
 import CCProject from "./models/codeCharta/CCProject";
-import firstInputProject from "./input/junit5_2018-10-27.cc";
-import secondInputProject from "./input/junit5_2019-10-26.cc";
+import firstInputProject from "./input/junit5_2018-10-27.cc.json";
+import secondInputProject from "./input/junit5_2019-10-26.cc.json";
 import schema from "./schema";
 import { select, Selection, BaseType } from "d3-selection";
 import Visualization, { TreemapAlgorithm } from "./models/visualization/Visualization";
 import { Layout } from "./models/visualization/Visualization";
 
-const svgWidth = window.innerWidth / 2.5;
-const svgHeight = window.innerHeight / 1.5;
+const svgWidth = window.innerWidth / 2;
+const svgHeight = window.innerHeight / 2;
 
 init();
 
@@ -20,35 +20,42 @@ function init() {
     validateInputFiles(schema, inputFiles);
     const projects = inputFiles.map(input => CCProject.create(input)); // Create projects for input files
 
-    const leftVersion = select("#oldVersion");
-    const rightVersion = select("#newVersion");
+    const leftDisplay = select("#leftDisplay");
+    const rightDisplay = select("#rightDisplay");
 
-    createTitle(leftVersion, projects[0].projectName);
-    createTitle(rightVersion, projects[1].projectName);
+    setTitle(leftDisplay, projects[0].projectName);
+    setTitle(rightDisplay, projects[1].projectName);
 
-    const leftVis = new Visualization(projects[0]);
-    const rightVis = new Visualization(projects[1]);
+    const leftVisualization = new Visualization(projects[0]);
+    const rightVisualization = new Visualization(projects[1]);
 
-    registerRedrawButtonHandler(leftVersion, leftVis);
-    registerRedrawButtonHandler(rightVersion, rightVis);
+    registerRedrawButtonHandler(leftDisplay, leftVisualization);
+    registerRedrawButtonHandler(rightDisplay, rightVisualization);
 
-    leftVis.createSVG(svgWidth, svgHeight, leftVersion);
-    rightVis.createSVG(svgWidth, svgHeight, rightVersion);
-    leftVis.draw(leftVersion, Layout.Street, "rloc");
-    rightVis.draw(rightVersion, Layout.Street, "rloc");
+    leftVisualization.createSVG(svgWidth, svgHeight, leftDisplay);
+    rightVisualization.createSVG(svgWidth, svgHeight, rightDisplay);
+    leftVisualization.draw(leftDisplay, Layout.Street, "rloc");
+    rightVisualization.draw(rightDisplay, Layout.Street, "rloc");
 }
 
-function registerRedrawButtonHandler(version: Selection<BaseType, unknown, HTMLElement, any>, visualization: Visualization) {
-    version.select("button.redraw").on("click", () => {
-        const metric = getMetric(version);
-        const layout = getLayout(version);
-        const depth = getDepth(version);
-        const treemapAlgorithm = getTreemapAlgorithm(version);
-        version.select("svg").remove();
-        visualization.createSVG(svgWidth, svgHeight, version);
-        visualization.draw(version, layout, metric, treemapAlgorithm, depth);
+function registerRedrawButtonHandler(display: Selection<BaseType, unknown, HTMLElement, any>, visualization: Visualization) {
+    display.select("button.redraw").on("click", () => {
+        const metric = getMetric(display);
+        const layout = getLayout(display);
+        const depth = getDepth(display);
+        const treemapAlgorithm = getTreemapAlgorithm(display);
+        // const project = getProject(version);
+        // visualization.project = project;
+        display.select("svg").remove();
+        visualization.createSVG(svgWidth, svgHeight, display);
+        visualization.draw(display, layout, metric, treemapAlgorithm, depth);
     });
 }
+
+// function getProject(version: Selection<BaseType, unknown, HTMLElement, any>): CCProject {
+//     const projectOption = version.select(".projectOption").node() as HTMLInputElement;
+//     const fr = new FileReader();
+// }
 
 function getMetric(version: Selection<BaseType, unknown, HTMLElement, any>): string {
     const metricOption = version.select(".metricOption").node() as HTMLSelectElement;
@@ -66,8 +73,9 @@ function getLayout(version: Selection<BaseType, unknown, HTMLElement, any>): Lay
             return Layout.Treemap;
         case "treemapStreet":
             return Layout.TreemapStreet;
+        default:
+            throw new Error("Layout not specified");
     }
-    return Layout.Street;
 }
 
 function getDepth(version: Selection<BaseType, unknown, HTMLElement, any>): number {
@@ -84,12 +92,14 @@ function getTreemapAlgorithm(version: Selection<BaseType, unknown, HTMLElement, 
             return TreemapAlgorithm.Strip;
         case "squarified":
             return TreemapAlgorithm.Squarified;
+        case "sliceDice":
+            return TreemapAlgorithm.SliceAndDice
         default:
-            return TreemapAlgorithm.SliceAndDice;
+            throw new Error("Treemap layout not specified.");
     }
 }
 
-function createTitle(codeVersion: Selection<BaseType, unknown, HTMLElement, any>, name: string): void {
+function setTitle(codeVersion: Selection<BaseType, unknown, HTMLElement, any>, name: string): void {
     const projectName = name !== "" ? name : "Unnamed Project";
     codeVersion
         .select(".title")

@@ -30,7 +30,7 @@ export default class CCNode {
         }
         //Node is 'File' and should have attribute
         let metricValue = this.attributes.get(metric);
-        if (metricValue === undefined) {
+        if (!metricValue) {
             metricValue = 0; //nodes that don't have the metric key are ignored
         }
         return metricValue;

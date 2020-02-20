@@ -30,7 +30,6 @@ export default class HorizontalStreet extends Street {
         for (const child of this.children) {
             child.calculateDimension(metric);
         }
-
         this.splitChildrenToRows(this.children);
         this.rearrangeRows();
 
@@ -43,6 +42,7 @@ export default class HorizontalStreet extends Street {
         const topRowNodes = this.layoutTopRow(origin, maxTopHeight);
         const bottomRowNodes = this.layoutBottomRow(origin, maxTopHeight);
         const streetNode = this.layoutStreet(origin, maxTopHeight);
+
         return [...topRowNodes, streetNode, ...bottomRowNodes];
     }
 
@@ -54,6 +54,7 @@ export default class HorizontalStreet extends Street {
     private layoutTopRow(origin: Point, maxTopHeight: number): VisualNode[] {
         const rowOrigin = new Point(origin.x, origin.y);
         const nodes: VisualNode[] = [];
+
         if (this.orientation === HorizontalOrientation.LEFT) {
             const rowWidth = this.getLength(this.topRow);
             rowOrigin.x += this.width - rowWidth;
@@ -77,8 +78,10 @@ export default class HorizontalStreet extends Street {
         const streetOrigin = new Point(origin.x, streetOffsetY);
         const streetOverhang = this.calculateStreetOverhang(streetOrigin);
         const streetWidth = this.width - streetOverhang;
+
         streetOrigin.x += this.orientation === HorizontalOrientation.LEFT ? streetOverhang : 0;
         this.streetRect = new Rectangle(streetOrigin, streetWidth, this.getStreetThickness());
+
         return new VisualNode(this.streetRect, this.node, Color.Folder);
     }
 
@@ -90,6 +93,7 @@ export default class HorizontalStreet extends Street {
     private layoutBottomRow(origin: Point, maxTopHeight: number): VisualNode[] {
         const rowOrigin = new Point(origin.x, origin.y);
         const nodes: VisualNode[] = [];
+
         if (this.orientation === HorizontalOrientation.LEFT) {
             const rowWidth = this.getLength(this.bottomRow);
             rowOrigin.x += this.width - rowWidth;
@@ -137,6 +141,7 @@ export default class HorizontalStreet extends Street {
      */
     private getLengthUntil(boxes: Box[], end: number): number {
         let sum: number = 0;
+
         for (let i = 0; i < end; i++) {
             sum += boxes[i].width;
         }
@@ -190,9 +195,8 @@ export default class HorizontalStreet extends Street {
     protected calculateStreetOverhang(streetOrigin: Point): number {
         if (this.orientation === HorizontalOrientation.LEFT) {
             return this.calculateLeftStreetOverhang(streetOrigin);
-        } else {
-            return this.calculateRightStreetOverhang(streetOrigin);
         }
+        return this.calculateRightStreetOverhang(streetOrigin);
     }
 
     /**
@@ -202,11 +206,11 @@ export default class HorizontalStreet extends Street {
     private calculateLeftStreetOverhang(streetOrigin: Point): number {
         const firstTopBox = this.topRow[0];
         const firstBottomBox = this.bottomRow[0];
-        const topOverhang = firstTopBox instanceof VerticalStreet 
-            ? firstTopBox.streetRect!.topLeft.x - streetOrigin.x 
+        const topOverhang = firstTopBox instanceof VerticalStreet
+            ? firstTopBox.streetRect!.topLeft.x - streetOrigin.x
             : this.width - this.getLength(this.topRow);
-        const bottomOverhang = firstBottomBox instanceof VerticalStreet 
-            ? firstBottomBox.streetRect!.topLeft.x - streetOrigin.x 
+        const bottomOverhang = firstBottomBox instanceof VerticalStreet
+            ? firstBottomBox.streetRect!.topLeft.x - streetOrigin.x
             : this.width - this.getLength(this.bottomRow);
 
         return topOverhang > 0 && bottomOverhang > 0 ? Math.min(topOverhang, bottomOverhang) : 0;
@@ -220,11 +224,11 @@ export default class HorizontalStreet extends Street {
         const lastTopBox = this.topRow[this.topRow.length - 1];
         const lastBottomBox = this.bottomRow[this.bottomRow.length - 1];
         const streetRightX = streetOrigin.x + this.width;
-        const topOverhang = lastTopBox instanceof VerticalStreet 
-            ? streetRightX - lastTopBox.streetRect!.getBottomRight().x 
+        const topOverhang = lastTopBox instanceof VerticalStreet
+            ? streetRightX - lastTopBox.streetRect!.getBottomRight().x
             : this.width - this.getLength(this.topRow);
-        const bottomOverhang = lastBottomBox instanceof VerticalStreet 
-            ? streetRightX - lastBottomBox.streetRect!.getBottomRight().x 
+        const bottomOverhang = lastBottomBox instanceof VerticalStreet
+            ? streetRightX - lastBottomBox.streetRect!.getBottomRight().x
             : this.width - this.getLength(this.bottomRow);
 
         return topOverhang > 0 && bottomOverhang > 0 ? Math.min(topOverhang, bottomOverhang) : 0;
