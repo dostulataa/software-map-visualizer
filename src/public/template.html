@@ -3,135 +3,212 @@
 
 <head>
   <meta charset="UTF-8">
-  <!-- Die 3 Meta-Tags oben *müssen* zuerst im head stehen; jeglicher sonstiger head-Inhalt muss *nach* diesen Tags kommen -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= htmlWebpackPlugin.options.title %></title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <style>
-  .visualization {
-    border: 1px solid black;
-    background-color: white;
-  }
-
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-
   body {
-    background-color: lightgrey;
+    margin: 0;
   }
+  
+  .display {
+    display: inline-block;
+    width: calc(50% - 48px);
+  }
+
+  .display.left {
+    margin: 0 64px 0 16px;
+  }
+
+    .display .visualization {
+      border: 1px solid black;
+      background-color: white;
+    }
+
+      .display .visualization svg {
+        height: 100%;
+        width: 100%;
+      }
+
+    .display .options label {
+      display: inline-block;
+      width: 96px;
+    }
+
+    .display .options input,
+    .display .options select {
+      border: 1px solid #6b6b6b;
+      box-sizing: border-box;
+      display: inline-block;
+      padding: 0;
+      width: 256px;
+    }
+
+    .display .options div,
+    .display .options button,
+    .display .options input[type="file"] {
+      margin-top: 8px;
+    }
+
+    .display .options button {
+      display: block;
+    }
 </style>
 
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="codeVersion col-md-5" id="oldVersion">
-        <div class="container">
-          <div class="row">
-            <h3 class="title"></h3>
-          </div>
-          <div class="row">
-            <div class="visualization"></div>
-          </div>
-          <div class="options">
-            <div class="row">
-              <div class="col-md-2">Metric:</div>
-              <div class="spacer col-md-1"></div>
-              <div class="col-md-2"><input type="text" class="metricOption" value="rloc" /></div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">Layout:</div>
-              <div class="spacer col-md-1"></div>
-              <div class="col-md-2">
-                <select class="layoutOption">
-                  <option value="treemapStreet" selected="selected">TreemapStreet</option>
-                  <option value="streetLayout">StreetLayout</option>
-                  <option value="treemap">Treemap</option>
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">Depth:</div>
-              <div class="spacer col-md-1"></div>
-              <div class="col-md-2"><input type="number" name="depth" min="0" max="10" value="0" class="depthOption" />
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">Treemap:</div>
-              <div class="spacer col-md-1"></div>
-              <div class="col-md-2">
-                <select class="treemapOption">
-                  <option value="strip" selected="selected">Strip</option>
-                  <option value="squarified">Squarified</option>
-                  <option value="sliceDice">Slice And Dice</option>
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <button type="button" class="redraw">Redraw</button>
-            </div>
-          </div>
-        </div>
+
+  <div class="display left" id="leftDisplay">
+
+    <h3 class="title"></h3>
+
+    <div class="visualization"></div>
+
+    <div class="options">
+
+      <div class="metricOption">
+
+        <label for="metricOptionLeft">
+          Metric:
+        </label>
+        <input type="text" value="rloc" id="metricOptionLeft" />
       </div>
-      <div class="col-md-1"></div>
-      <div class="codeVersion col-md-5" id="newVersion">
-        <div class="container">
-          <div class="row">
-            <h3 class="title"></h3>
-          </div>
-          <div class="row">
-            <div class="visualization"></div>
-          </div>
-          <div class="options">
-            <div class="row">
-              <div class="col-md-2">Metric:</div>
-              <div class="spacer col-md-1"></div>
-              <div class="col-md-2"><input type="text" class="metricOption" value="rloc"/></div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">Layout:</div>
-              <div class="spacer col-md-1"></div>
-              <div class="col-md-2">
-                <select class="layoutOption">
-                  <option value="treemapStreet" selected="selected">TreemapStreet</option>
-                  <option value="streetLayout">StreetLayout</option>
-                  <option value="treemap">Treemap</option>
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">Depth:</div>
-              <div class="spacer col-md-1"></div>
-              <div class="col-md-2"><input type="number" name="depth" min="0" max="10" value="0" class="depthOption" />
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">Treemap:</div>
-              <div class="spacer col-md-1"></div>
-              <div class="col-md-2">
-                <select class="treemapOption">
-                  <option value="strip" selected="selected">Strip</option>
-                  <option value="squarified">Squarified</option>
-                  <option value="sliceDice">Slice And Dice</option>
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <button type="button" class="redraw">Redraw</button>
-            </div>
-          </div>
-        </div>
+
+      <div class="layoutOption">
+
+        <label for="layoutOptionLeft">
+          Layout:
+        </label>
+
+        <select id="layoutOptionLeft">
+
+          <option value="treemapStreet" selected="selected">
+            TreemapStreet
+          </option>
+
+          <option value="streetLayout">
+            StreetLayout
+          </option>
+
+          <option value="treemap">
+            Treemap
+          </option>
+        </select>
       </div>
+
+      <div class="depthOption">
+
+        <label for="depthOptionLeft">
+          Depth:
+        </label>
+        <input type="number" name="depth" min="0" max="10" value="0" id="depthOptionLeft" />
+      </div>
+
+      <div class="treemapOption">
+
+        <label for="treemapOptionLeft">
+          Treemap:
+        </label>
+
+        <select id="treemapOptionLeft">
+
+          <option value="strip" selected="selected">
+            Strip
+          </option>
+
+          <option value="squarified">
+            Squarified
+          </option>
+
+          <option value="sliceDice">
+            Slice And Dice
+          </option>
+        </select>
+      </div>
+
+      <input type="file" value="import" />
+
+      <button type="button" class="redraw">
+        Redraw
+      </button>
     </div>
   </div>
 
-  <!-- jQuery (wird für Bootstrap JavaScript-Plugins benötigt) -->
-  <!-- script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></!-- script> -->
-  <!-- Binde alle kompilierten Plugins zusammen ein (wie hier unten) oder such dir einzelne Dateien nach Bedarf aus -->
+  <div class="display right" id="rightDisplay">
+
+    <h3 class="title"></h3>
+
+    <div class="visualization"></div>
+
+    <div class="options">
+
+      <div class="metricOption">
+
+        <label for="metricOptionRight">
+          Metric:
+        </label>
+        <input type="text" value="rloc" id="metricOptionRight" />
+      </div>
+
+      <div class="layoutOption">
+
+        <label for="layoutOptionRight">
+          Layout:
+        </label>
+
+        <select id="layoutOptionRight">
+
+          <option value="treemapStreet" selected="selected">
+            TreemapStreet
+          </option>
+
+          <option value="streetLayout">
+            StreetLayout
+          </option>
+
+          <option value="treemap">
+            Treemap
+          </option>
+
+        </select>
+      </div>
+
+      <div class="depthOption">
+
+        <label for="depthOptionRight">
+          Depth:
+        </label>
+
+        <input type="number" name="depth" min="0" max="10" value="0" id="depthOptionRight" />
+      </div>
+
+      <div class="treemapOption">
+
+        <label for="treemapOptionRight">
+          Treemap:
+        </label>
+
+        <select id="treemapOptionRight">
+
+          <option value="strip" selected="selected">
+            Strip
+          </option>
+
+          <option value="squarified">
+            Squarified
+          </option>
+
+          <option value="sliceDice">
+            Slice And Dice
+          </option>
+        </select>
+      </div>
+
+      <input type="file" value="import" id="projectOptionRight" />
+
+      <button type="button" class="redraw">
+        Redraw
+      </button>
+    </div>
+  </div>
 </body>
 
 </html>
