@@ -7,6 +7,8 @@ import StripTreemap from "../Treemap/StripTreemap";
 import Treemap from "../Treemap/Treemap";
 import SquarifiedTreemap from "../Treemap/SquarifiedTreemap";
 import CCNode from "../codeCharta/CCNode";
+import SliceDiceTreemap from "../Treemap/SliceDiceTreemap";
+import Point from "./Point";
 
 export enum Layout {
     Street,
@@ -22,7 +24,7 @@ export enum TreemapAlgorithm {
 
 export default class Visualization {
 
-    private project: CCProject;
+    public project: CCProject;
 
     constructor(project: CCProject) {
         this.project = project;
@@ -67,11 +69,11 @@ export default class Visualization {
                 treemap = new SquarifiedTreemap(rootNode, metric);
                 break;
             default:
-                treemap = new Treemap(rootNode, metric);
+                treemap = new SliceDiceTreemap(rootNode, metric);
                 break;
         }
         treemap.calculateDimension(metric);
-        return treemap.layout();
+        return treemap.layout(new Point(0, 0));
     }
 
     private registerZoomBehavior(visualization: Selection<BaseType, unknown, HTMLElement, any>) {
@@ -86,6 +88,7 @@ export default class Visualization {
     }
 
     private drawNodes(nodes: VisualNode[], codeVersion: Selection<BaseType, unknown, HTMLElement, any>, metric: string, leafMargin: number = .3): void {
+        console.log(nodes.length);
         const codeVersionId = codeVersion.attr("id");
         codeVersion.select("svg")
             .selectAll("rect")

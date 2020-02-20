@@ -4,9 +4,10 @@ import House from "../models/streetLayout/House";
 import VerticalStreet from "../models/streetLayout/VerticalStreet";
 import Box from "../models/streetLayout/Box";
 import StripTreemap from "../models/Treemap/StripTreemap";
+import SquarifiedTreemap from "../models/Treemap/SquarifiedTreemap";
 import { TreemapAlgorithm } from "../models/visualization/Visualization";
 import Treemap from "../models/Treemap/Treemap";
-import SquarifiedTreemap from "../models/Treemap/SquarifiedTreemap";
+import SliceDiceTreemap from "../models/Treemap/SliceDiceTreemap";
 
 enum StreetOrientation { Horizontal, Vertical };
 
@@ -69,9 +70,9 @@ function mergeDirectories(node: CCNode, metric: string): CCNode {
 }
 
 function createTreemapBox(node: CCNode, metric: string, treemapAlgorithm: TreemapAlgorithm) {
-    switch(treemapAlgorithm) {
+    switch (treemapAlgorithm) {
         case TreemapAlgorithm.SliceAndDice:
-            return new Treemap(node, metric);
+            return new SliceDiceTreemap(node, metric);
         case TreemapAlgorithm.Squarified:
             return new SquarifiedTreemap(node, metric);
         case TreemapAlgorithm.Strip:
