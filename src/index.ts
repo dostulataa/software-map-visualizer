@@ -57,13 +57,13 @@ function registerRedrawButtonHandler(display: Selection<BaseType, unknown, HTMLE
 //     const fr = new FileReader();
 // }
 
-function getMetric(version: Selection<BaseType, unknown, HTMLElement, any>): string {
-    const metricOption = version.select(".metricOption").node() as HTMLSelectElement;
+function getMetric(display: Selection<BaseType, unknown, HTMLElement, any>): string {
+    const metricOption = display.select(".metricOption input").node() as HTMLInputElement;
     return metricOption.value;
 }
 
-function getLayout(version: Selection<BaseType, unknown, HTMLElement, any>): Layout {
-    const layoutOptions = version.select(".layoutOption").node() as HTMLSelectElement;
+function getLayout(display: Selection<BaseType, unknown, HTMLElement, any>): Layout {
+    const layoutOptions = display.select(".layoutOption select").node() as HTMLSelectElement;
     const selectedLayout = layoutOptions.options[layoutOptions.selectedIndex].value;
 
     switch (selectedLayout) {
@@ -78,13 +78,13 @@ function getLayout(version: Selection<BaseType, unknown, HTMLElement, any>): Lay
     }
 }
 
-function getDepth(version: Selection<BaseType, unknown, HTMLElement, any>): number {
-    const selectedDepth = version.select(".depthOption").node() as HTMLInputElement;
+function getDepth(display: Selection<BaseType, unknown, HTMLElement, any>): number {
+    const selectedDepth = display.select(".depthOption input").node() as HTMLInputElement;
     return Number(selectedDepth.value);
 }
 
-function getTreemapAlgorithm(version: Selection<BaseType, unknown, HTMLElement, any>): TreemapAlgorithm {
-    const treemapOptions = version.select(".treemapOption").node() as HTMLSelectElement;
+function getTreemapAlgorithm(display: Selection<BaseType, unknown, HTMLElement, any>): TreemapAlgorithm {
+    const treemapOptions = display.select(".treemapOption select").node() as HTMLSelectElement;
     const selectedTreemapAlgorithm = treemapOptions.options[treemapOptions.selectedIndex].value;
 
     switch (selectedTreemapAlgorithm) {
@@ -99,9 +99,9 @@ function getTreemapAlgorithm(version: Selection<BaseType, unknown, HTMLElement, 
     }
 }
 
-function setTitle(codeVersion: Selection<BaseType, unknown, HTMLElement, any>, name: string): void {
+function setTitle(display: Selection<BaseType, unknown, HTMLElement, any>, name: string): void {
     const projectName = name !== "" ? name : "Unnamed Project";
-    codeVersion
+    display
         .select(".title")
         .text(projectName);
 }
