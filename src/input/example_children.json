@@ -1,0 +1,96 @@
+{
+    "projectName": "Example Project with children nodes",
+    "apiVersion": "1.0",
+    "nodes": [
+        {
+            "name": "root",
+            "type": "Folder",
+            "attributes": {},
+            "children": [
+                {
+                    "name": "fileNode1",
+                    "type": "File",
+                    "attributes": {
+                        "rloc": 600
+                    },
+                    "children": []
+                },
+                {
+                    "name": "fileNode2",
+                    "type": "File",
+                    "attributes": {
+                        "rloc": 400
+                    },
+                    "children": []
+                },
+                {
+                    "name": "fileNode3",
+                    "type": "File",
+                    "attributes": {
+                        "rloc": 200
+                    },
+                    "children": []
+                },
+                {
+                    "name": "folderNode4",
+                    "type": "Folder",
+                    "attributes": {
+                        "rloc": 600
+                    },
+                    "children": [
+                        {
+                            "name": "fileNode4.1",
+                            "type": "File",
+                            "attributes": {
+                                "rloc": 200
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "fileNode4.2",
+                            "type": "File",
+                            "attributes": {
+                                "rloc": 300
+                            },
+                            "children": []
+                        },
+                        {
+                            "name": "fileNode4.3",
+                            "type": "File",
+                            "attributes": {
+                                "rloc": 100
+                            },
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "fileNode5",
+                    "type": "File",
+                    "attributes": {
+                        "rloc": 200
+                    },
+                    "children": []
+                },
+                {
+                    "name": "fileNode6",
+                    "type": "File",
+                    "attributes": {
+                        "rloc": 300
+                    },
+                    "children": []
+                },
+                {
+                    "name": "fileNode7",
+                    "type": "File",
+                    "attributes": {
+                        "rloc": 100
+                    },
+                    "children": []
+                }
+            ]
+        }
+    ],
+    "edges": [],
+    "attributeTypes": {}
+}

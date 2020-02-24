@@ -1,78 +1,71 @@
 {
-	"projectName": "Example Project flat",
-	"apiVersion": "1.0",
-	"nodes": [
-		{
-			"name": "root",
-			"type": "Folder",
-			"attributes": {},
-			"children": [
+    "projectName": "Example Project",
+    "apiVersion": "1.0",
+    "nodes": [
+        {
+            "name": "root",
+            "type": "Folder",
+            "attributes": {},
+            "children": [
                 {
-                    "name": "eins",
-					"type": "File",
-					"attributes": {
+                    "name": "fileNode1",
+                    "type": "File",
+                    "attributes": {
                         "rloc": 600
                     },
-                    "children": [],
-					"link": "http://www.google.de"
+                    "children": []
                 },
                 {
-                    "name": "zwei",
-					"type": "File",
-					"attributes": {
+                    "name": "fileNode2",
+                    "type": "File",
+                    "attributes": {
                         "rloc": 400
-					},
-                    "children": [],
-					"link": "http://www.google.de"
+                    },
+                    "children": []
                 },
                 {
-                    "name": "drei",
+                    "name": "fileNode3",
                     "type": "File",
                     "attributes": {
                         "rloc": 200
                     },
-                    "children": [],
-                    "link": "http://www.google.de"
+                    "children": []
                 },
                 {
-                    "name": "vier",
+                    "name": "fileNode4",
                     "type": "File",
                     "attributes": {
-                        "rloc": 60
+                        "rloc": 600
                     },
-                    "children": [],
-                    "link": "http://www.google.de"
+                    "children": []
                 },
                 {
-                    "name": "fuenf",
+                    "name": "fileNode5",
                     "type": "File",
                     "attributes": {
                         "rloc": 200
                     },
-                    "children": [],
-                    "link": "http://www.google.de"
+                    "children": []
                 },
                 {
-                    "name": "sechs",
-					"type": "File",
-					"attributes": {
-						"rloc": 300
-					},
-                    "children": [],
-					"link": "http://www.google.de"
+                    "name": "fileNode6",
+                    "type": "File",
+                    "attributes": {
+                        "rloc": 300
+                    },
+                    "children": []
                 },
                 {
-					"name": "sieben",
-					"type": "File",
-					"attributes": {
-						"rloc": 100
-					},
-                    "children": [],
-					"link": "http://www.google.de"
-				}
-			]
-		}
-	],
-	"edges": [],
-	"attributeTypes": {}
+                    "name": "fileNode7",
+                    "type": "File",
+                    "attributes": {
+                        "rloc": 100
+                    },
+                    "children": []
+                }
+            ]
+        }
+    ],
+    "edges": [],
+    "attributeTypes": {}
 }
