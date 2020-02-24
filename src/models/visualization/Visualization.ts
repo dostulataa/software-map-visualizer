@@ -98,27 +98,27 @@ export default class Visualization {
             .append('rect')
             .attr("class", "visualNode")
             .attr("id", (visualNode: VisualNode): string => {
-                return `${displayId}-${this.replaceIllegalChars(visualNode.node.name)}`
+                return `${displayId}-${this.replaceIllegalChars(visualNode.node.name)}`;
             })
             .attr("x", (visualNode: VisualNode): number => {
-                return visualNode.rectangle.topLeft.x + (visualNode.isFile() && visualNode.rectangle.height > leafMargin ? leafMargin : 0)
+                return visualNode.rectangle.topLeft.x + (visualNode.isFile() && visualNode.rectangle.height > leafMargin ? leafMargin : 0);
             })
             .attr("y", (visualNode: VisualNode): number => {
-                return visualNode.rectangle.topLeft.y + (visualNode.isFile() && visualNode.rectangle.width > leafMargin ? leafMargin : 0)
+                return visualNode.rectangle.topLeft.y + (visualNode.isFile() && visualNode.rectangle.width > leafMargin ? leafMargin : 0);
             })
             .attr("height", (visualNode: VisualNode): number => {
-                return visualNode.rectangle.height - (visualNode.isFile() && visualNode.rectangle.height > 2 * leafMargin ? 2 * leafMargin : 0)
+                return visualNode.rectangle.height - (visualNode.isFile() && visualNode.rectangle.height > 2 * leafMargin ? 2 * leafMargin : 0);
             })
             .attr("width", (visualNode: VisualNode): number => {
-                return visualNode.rectangle.width - (visualNode.isFile() && visualNode.rectangle.width > 2 * leafMargin ? 2 * leafMargin : 0)
+                return visualNode.rectangle.width - (visualNode.isFile() && visualNode.rectangle.width > 2 * leafMargin ? 2 * leafMargin : 0);
             })
             .style("fill", (visualNode: VisualNode): Color => {
-                return visualNode.color
+                return visualNode.color;
             })
             .on("mouseover", this.handleMouseEvent)
             .on("mouseout", this.handleMouseEvent)
             .append("svg:title").text((visualNode: VisualNode): string => {
-                return `${visualNode.node.name}\n${metric}: ${visualNode.node.size(metric)}`
+                return `${visualNode.node.name}\n${metric}: ${visualNode.node.size(metric)}`;
             });
     }
 
@@ -151,7 +151,7 @@ export default class Visualization {
         const otherId = `#${otherDisplayId}-${nodeId}`;
         const otherNode = select(otherId);
         if (!otherNode.empty()) {
-            otherNode.style("fill", color)
+            otherNode.style("fill", color);
         };
     }
 
