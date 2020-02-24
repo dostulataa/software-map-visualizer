@@ -2,7 +2,7 @@ import { select, event, Selection, BaseType } from "d3-selection";
 import { zoom } from "d3-zoom";
 import CCProject from "../codeCharta/CCProject";
 import VisualNode, { Color } from "./VisualNode";
-import streetMap from "../../algorithms/streetLayout";
+import streetMap from "../../algorithms/streetAlgorithm";
 import StripTreemap from "../Treemap/StripTreemap";
 import Treemap from "../Treemap/Treemap";
 import SquarifiedTreemap from "../Treemap/SquarifiedTreemap";
