@@ -50,10 +50,10 @@ export default class Visualization {
                 nodes = this.createTreemapNodes(rootNode, treemapAlgorithm, metric);
                 break;
             case Layout.TreemapStreet:
-                nodes = streetMap(rootNode, metric, treemapAlgorithm, startDepth).layout();
+                nodes = streetMap(rootNode, metric, treemapAlgorithm, startDepth).layout(new Point(0, 0));
                 break;
             default:
-                nodes = streetMap(rootNode, metric).layout();
+                nodes = streetMap(rootNode, metric).layout(new Point(0, 0));
                 break;
         }
         this.drawNodes(nodes, selection, metric);

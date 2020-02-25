@@ -8,6 +8,7 @@ import SquarifiedTreemap from "../models/Treemap/SquarifiedTreemap";
 import { TreemapAlgorithm } from "../models/visualization/Visualization";
 import Treemap from "../models/Treemap/Treemap";
 import SliceDiceTreemap from "../models/Treemap/SliceDiceTreemap";
+import Street from "../models/streetLayout/Street";
 
 enum StreetOrientation { Horizontal, Vertical };
 
@@ -16,8 +17,8 @@ enum StreetOrientation { Horizontal, Vertical };
  * @param root root node of the project
  * @param metric metric by which nodes are scaled
  */
-export default function init(root: CCNode, metric: string, treemapAlgorithm: TreemapAlgorithm = TreemapAlgorithm.Strip, startDepth: number = Infinity): HorizontalStreet {
-    const boxes = createBoxes(root, StreetOrientation.Horizontal, metric, 0, startDepth, treemapAlgorithm);
+export default function init(root: CCNode, metric: string, treemapAlgorithm: TreemapAlgorithm = TreemapAlgorithm.Strip, treemapDepth: number = Infinity): Street {
+    const boxes = createBoxes(root, StreetOrientation.Horizontal, metric, 0, treemapDepth, treemapAlgorithm);
     const street = new HorizontalStreet(root, boxes, 0);
     street.calculateDimension(metric);
     return street;
@@ -28,7 +29,7 @@ export default function init(root: CCNode, metric: string, treemapAlgorithm: Tre
  * @param node current to create a box for
  * @param streetOrientation a child's street orientation
  */
-function createBoxes(node: CCNode, orientation: StreetOrientation, metric: string, depth: number, startDepth: number, treemapAlgorithm: TreemapAlgorithm): Box[] {
+function createBoxes(node: CCNode, orientation: StreetOrientation, metric: string, depth: number, treemapDepth: number, treemapAlgorithm: TreemapAlgorithm): Box[] {
     const children: Box[] = [];
     for (let child of node.children) {
         if (child.size(metric) === 0) { continue };
@@ -36,13 +37,13 @@ function createBoxes(node: CCNode, orientation: StreetOrientation, metric: strin
             children.push(new House(child));
         } else {
             child = mergeDirectories(child, metric);
-            if (depth >= startDepth) {
+            if (depth >= treemapDepth) {
                 const treemap: Treemap = createTreemapBox(child, metric, treemapAlgorithm);
                 children.push(treemap);
             } else {
                 children.push(orientation === StreetOrientation.Horizontal
-                    ? new VerticalStreet(child, createBoxes(child, 1 - orientation, metric, depth + 1, startDepth, treemapAlgorithm), depth + 1)
-                    : new HorizontalStreet(child, createBoxes(child, 1 - orientation, metric, depth + 1, startDepth, treemapAlgorithm), depth + 1));
+                    ? new VerticalStreet(child, createBoxes(child, 1 - orientation, metric, depth + 1, treemapDepth, treemapAlgorithm), depth + 1)
+                    : new HorizontalStreet(child, createBoxes(child, 1 - orientation, metric, depth + 1, treemapDepth, treemapAlgorithm), depth + 1));
             }
         }
     }
