@@ -30,66 +30,98 @@ export default class Visualization {
         this.project = project;
     }
 
-    public createSVG(svgWidth: number, svgHeight: number, codeVersion: Selection<BaseType, unknown, HTMLElement, any>) {
-        const visualization = codeVersion.select(".visualization");
-        const svgId = `svg-${codeVersion.attr("id")}`;
+    /**
+     * Creates svg in corresponding display
+     * @param svgWidth width of the svg
+     * @param svgHeight height of the svg
+     * @param display display where svg should be created
+     */
+    public createSVG(svgWidth: number, svgHeight: number, display: Selection<BaseType, unknown, HTMLElement, any>) {
+        const visualization = display.select(".visualization");
+        const svgId = `svg-${display.attr("id")}`;
         const svg = visualization
             .append("svg")
             .attr("id", svgId)
             .attr("width", svgWidth)
             .attr("height", svgHeight);
+        
         this.registerZoomBehavior(visualization);
         return svg;
     }
 
-    public draw(selection: Selection<BaseType, unknown, HTMLElement, any>, layout: Layout, metric: string, treemapAlgorithm: TreemapAlgorithm = TreemapAlgorithm.Squarified, startDepth: number = Infinity) {
+    /**
+     * Creates layout with chosen options.
+     * @param display display on which nodes are to be drawn
+     * @param layout layout to be used
+     * @param metricName metric by which nodes are scaled
+     * @param treemapAlgorithm treemap algorithm for TMStreet
+     * @param treemapDepth depth where treemaps substitute streets
+     */
+    public draw(display: Selection<BaseType, unknown, HTMLElement, any>, layout: Layout, metricName: string, treemapAlgorithm: TreemapAlgorithm = TreemapAlgorithm.Squarified, treemapDepth: number = Infinity) {
         const rootNode = this.project.nodes[0];
         let nodes: VisualNode[];
         switch (layout) {
             case Layout.Treemap:
-                nodes = this.createTreemapNodes(rootNode, treemapAlgorithm, metric);
+                nodes = this.createTreemapNodes(rootNode, treemapAlgorithm, metricName);
                 break;
             case Layout.TreemapStreet:
-                nodes = streetMap(rootNode, metric, treemapAlgorithm, startDepth).layout(new Point(0, 0));
+                nodes = streetMap(rootNode, metricName, treemapAlgorithm, treemapDepth).layout(new Point(0, 0));
                 break;
             default:
-                nodes = streetMap(rootNode, metric).layout(new Point(0, 0));
+                nodes = streetMap(rootNode, metricName).layout(new Point(0, 0));
                 break;
         }
-        this.drawNodes(nodes, selection, metric);
+        this.drawNodes(nodes, display, metricName);
     }
 
-    private createTreemapNodes(rootNode: CCNode, treemapAlgorithm: TreemapAlgorithm, metric: string): VisualNode[] {
+    /**
+     * Creates a treemap layout.
+     * @param rootNode root node of treemap
+     * @param treemapAlgorithm algorithm that should be used for treemap
+     * @param metricName metric by which nodes are scaled
+     */
+    private createTreemapNodes(rootNode: CCNode, treemapAlgorithm: TreemapAlgorithm, metricName: string): VisualNode[] {
         let treemap: Treemap;
 
         switch (treemapAlgorithm) {
             case TreemapAlgorithm.Strip:
-                treemap = new StripTreemap(rootNode, metric);
+                treemap = new StripTreemap(rootNode, metricName);
                 break;
             case TreemapAlgorithm.Squarified:
-                treemap = new SquarifiedTreemap(rootNode, metric);
+                treemap = new SquarifiedTreemap(rootNode, metricName);
                 break;
             default:
-                treemap = new SliceDiceTreemap(rootNode, metric);
+                treemap = new SliceDiceTreemap(rootNode, metricName);
                 break;
         }
 
-        treemap.calculateDimension(metric);
-        return treemap.layout(new Point(0, 0));
+        treemap.calculateDimension(metricName);
+        return treemap.layout();
     }
 
-    private registerZoomBehavior(visualization: Selection<BaseType, unknown, HTMLElement, any>) {
-        const typedVisualization = visualization as Selection<Element, unknown, HTMLElement, any>;
-        const svg = typedVisualization.select("svg");
+    /**
+     * Makes svg zoomable and translateable.
+     * @param display display where zoom behavior should be registered
+     */
+    private registerZoomBehavior(display: Selection<BaseType, unknown, HTMLElement, any>) {
+        const typedDisplay = display as Selection<Element, unknown, HTMLElement, any>;
+        const svg = typedDisplay.select("svg");
         const zoomBehavior = zoom().scaleExtent([.1, 15]).on("zoom", () => {
             svg
                 .selectAll("rect.visualNode")
                 .attr("transform", event.transform.toString());
         });
-        typedVisualization.call(zoomBehavior);
+        typedDisplay.call(zoomBehavior);
     }
 
-    private drawNodes(nodes: VisualNode[], display: Selection<BaseType, unknown, HTMLElement, any>, metric: string, leafMargin: number = .3): void {
+    /**
+     * Draws nodes on svg and adds information.
+     * @param nodes nodes to be drawn
+     * @param display display of svg where nodes are drawn on
+     * @param metricName metric that 
+     * @param leafMargin margin on file nodes
+     */
+    private drawNodes(nodes: VisualNode[], display: Selection<BaseType, unknown, HTMLElement, any>, metricName: string, leafMargin: number = .3): void {
         const displayId = display.attr("id");
         display.select("svg")
             .selectAll("rect")
@@ -118,7 +150,7 @@ export default class Visualization {
             .on("mouseover", this.handleMouseEvent)
             .on("mouseout", this.handleMouseEvent)
             .append("svg:title").text((visualNode: VisualNode): string => {
-                return `${visualNode.node.name}\n${metric}: ${visualNode.node.size(metric)}`;
+                return `${visualNode.node.name}\n${metricName}: ${visualNode.node.size(metricName)}`;
             });
     }
 

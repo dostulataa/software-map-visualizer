@@ -16,12 +16,12 @@ export default abstract class Box {
 
     /**
      * Calculates height and width of the box.
-     * @param metric the used metric
+     * @param metricName the used metric
      */
-    public abstract calculateDimension(metric: string): void;
+    public abstract calculateDimension(metricName: string): void;
 
     /**
-     * Creates corresponding VisualNode.
+     * Creates corresponding VisualNodes.
      * @param origin upper left point of the box
      */
     public abstract layout(origin: Point): VisualNode[];

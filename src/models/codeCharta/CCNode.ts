@@ -16,7 +16,7 @@ export default class CCNode {
     }
 
     /**
-     * Calculates the size of the Node using a nodes metric. 
+     * Calculates the size of the node using a node's metric. 
      * @param metric the metric to scale by e.g. "rloc", "mcc", etc
      */
     public size(metric: string): number {

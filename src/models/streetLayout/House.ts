@@ -10,8 +10,8 @@ export default class House extends Box {
         super(node);
     }
 
-    public calculateDimension(metric: string): void {
-        const size = this.node.size(metric);
+    public calculateDimension(metricName: string): void {
+        const size = this.node.size(metricName);
         this.width = Math.sqrt(size);
         this.height = Math.sqrt(size);
     }

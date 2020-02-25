@@ -1,3 +1,8 @@
+/**
+ * Validates input files using a schema json file.
+ * @param schema schema that is used for validation
+ * @param inputFiles input files to be validated
+ */
 export default function validateInputFiles(schema: any, inputFiles: any[]) {
     const Ajv = require('ajv');
     const ajv = new Ajv({ allErrors: true });

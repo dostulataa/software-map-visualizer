@@ -24,11 +24,11 @@ export default class VerticalStreet extends Street {
 
     /**
      * Calculates height and width of the box and splits children in left- and rightrow.
-     * @param metric the used metric
+     * @param metricName the used metric
      */
-    public calculateDimension(metric: string): void {
+    public calculateDimension(metricName: string): void {
         for (const child of this.children) {
-            child.calculateDimension(metric);
+            child.calculateDimension(metricName);
         }
         this.splitChildrenToRows(this.children);
         this.rearrangeRows();

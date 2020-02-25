@@ -8,26 +8,35 @@ import VerticalStrip from "./Strip/VerticalStrip";
 import Strip from "./Strip/Strip";
 
 export default class SquarifiedTreemap extends Treemap {
-    constructor(rootNode: CCNode, metric: string) {
-        super(rootNode, metric);
+    constructor(rootNode: CCNode, metricName: string) {
+        super(rootNode, metricName);
     }
 
+    /**
+     * Creates the Squarified Treemap root node and starts algorithm for children.
+     * @param origin origin of node
+     */
     public layout(origin: Point = new Point(0, 0)): VisualNode[] {
         const rectangle = new Rectangle(origin, this.width, this.height);
         const rootNode = new VisualNode(rectangle, this.node, Color.Folder);
+        const children = this.node.children.filter(value => value.size(this.metricName) > 0);
 
         this.treemapNodes.push(rootNode);
-
-        const children = this.node.children.filter(value => value.size(this.metric) > 0);
 
         if (children.length === 0) {
             return this.treemapNodes
         };
-        this.createNodes(children, rectangle, this.node.size(this.metric));
+        this.createNodes(children, rectangle, this.node.size(this.metricName));
 
         return this.treemapNodes;
     }
 
+    /**
+     * Creates nodes for the squarified treemap layout.
+     * @param nodes current CCNodes to be created
+     * @param rect remaining rectangle
+     * @param rootSize size of root node
+     */
     protected createNodes(nodes: CCNode[], rect: Rectangle, rootSize: number): void {
         let processedNodesCount = 0;
         let currentRect = new Rectangle(new Point(rect.topLeft.x, rect.topLeft.y), rect.width, rect.height);
@@ -36,7 +45,7 @@ export default class SquarifiedTreemap extends Treemap {
 
         do {
             const currentStrip = this.createStrip(currentRect, orderedNodes.slice(processedNodesCount), currentRootSize);
-            const stripSize = currentStrip.totalSize(this.metric);
+            const stripSize = currentStrip.totalSize(this.metricName);
 
             if (stripSize > 0) {
                 const stripNodes = this.createStripNodes(currentStrip, currentRect, currentRootSize);
@@ -48,19 +57,32 @@ export default class SquarifiedTreemap extends Treemap {
         } while (processedNodesCount < orderedNodes.length); /* as long as there are children to process */
     }
 
+    /**
+     * Creates a Strip.
+     * @param rect rectangle where strip is placed
+     * @param nodes nodes in strip
+     * @param rootSize size of root node
+     */
     protected createStrip(rect: Rectangle, nodes: CCNode[], rootSize: number): Strip {
         const firstNode = nodes[0];
         const currentStrip = rect.isVertical()
             ? new HorizontalStrip([firstNode])
             : new VerticalStrip([firstNode]);
 
-        currentStrip.populate(nodes.slice(1), rect, rootSize, this.metric);
+        currentStrip.populate(nodes.slice(1), rect, rootSize, this.metricName);
 
         return currentStrip;
     }
 
+    /**
+     * Calculates the remaining rectangle after a strip has been placed.
+     * @param rect current rectangle
+     * @param strip placed strip
+     * @param parentSize size of parent node
+     * @param parentArea area of parent node
+     */
     protected remainingRectangle(rect: Rectangle, strip: Strip, parentSize: number, parentArea: number): Rectangle {
-        const stripSize = strip.totalScaledSize(strip.nodes, this.metric, parentSize, parentArea);
+        const stripSize = strip.totalScaledSize(strip.nodes, this.metricName, parentSize, parentArea);
 
         let newOrigin: Point;
         let width = rect.width;
@@ -79,22 +101,22 @@ export default class SquarifiedTreemap extends Treemap {
     }
 
     protected createStripNodes(strip: Strip, rect: Rectangle, rootSize: number, order?: number): VisualNode[] {
-        const stripNodes = strip.layout(rect, rootSize, this.metric, order);
+        const stripNodes = strip.layout(rect, rootSize, this.metricName, order);
         this.treemapNodes.push(...stripNodes);
         return stripNodes;
     }
 
     protected createChildrenNodes(stripNodes: VisualNode[]): void {
         for (let node of stripNodes) {
-            const children = node.node.children.filter(node => node.size(this.metric) > 0 );
+            const children = node.node.children.filter(node => node.size(this.metricName) > 0 );
             if (children.length > 0) {
-                const size = node.node.size(this.metric);
+                const size = node.node.size(this.metricName);
                 this.createNodes(children, node.rectangle, size);
             }
         }
     }
 
     private orderBySizeDescending(nodes: CCNode[]): CCNode[] {
-        return nodes.sort((a, b) => { return b.size(this.metric) - a.size(this.metric) });
+        return nodes.sort((a, b) => { return b.size(this.metricName) - a.size(this.metricName) });
     }
 }
