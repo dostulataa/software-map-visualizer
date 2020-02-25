@@ -44,18 +44,11 @@ function registerRedrawButtonHandler(display: Selection<BaseType, unknown, HTMLE
         const layout = getLayout(display);
         const depth = getDepth(display);
         const treemapAlgorithm = getTreemapAlgorithm(display);
-        // const project = getProject(version);
-        // visualization.project = project;
         display.select("svg").remove();
         visualization.createSVG(svgWidth, svgHeight, display);
         visualization.draw(display, layout, metric, treemapAlgorithm, depth);
     });
 }
-
-// function getProject(version: Selection<BaseType, unknown, HTMLElement, any>): CCProject {
-//     const projectOption = version.select(".projectOption").node() as HTMLInputElement;
-//     const fr = new FileReader();
-// }
 
 function getMetric(display: Selection<BaseType, unknown, HTMLElement, any>): string {
     const metricOption = display.select(".metricOption input").node() as HTMLInputElement;
