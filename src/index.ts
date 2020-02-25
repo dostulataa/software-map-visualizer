@@ -1,8 +1,8 @@
-import validateInputFiles from "./Validation";
+import validateInputFiles from "./input/validation/Validation";
 import CCProject from "./models/codeCharta/CCProject";
-import firstInputProject from "./input/junit5_2018-10-27.cc.json";
-import secondInputProject from "./input/junit5_2019-10-26.cc.json";
-import schema from "./schema";
+import firstInputProject from "./input/junit5_2019-10-26.cc.json";
+import secondInputProject from "./input/codecharta_2020-01.cc.json";
+import schema from "./input/validation/schema";
 import { select, Selection, BaseType } from "d3-selection";
 import Visualization, { TreemapAlgorithm } from "./models/visualization/Visualization";
 import { Layout } from "./models/visualization/Visualization";

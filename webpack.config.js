@@ -16,7 +16,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       hash: true,
       title: 'Software Map Visualization',
-      template: "./src/public/template.html",
+      template: "./src/template.html",
       filename: path.resolve("dist", "index.html")
     })
   ],
