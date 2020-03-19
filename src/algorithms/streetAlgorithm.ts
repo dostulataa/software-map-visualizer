@@ -66,7 +66,6 @@ function mergeDirectories(node: CCNode, metricName: string): CCNode {
     let mergedNode = node;
     for (const child of node.children) {
         if (child.isFolder()) {
-            if(mergedNode.name.includes("root")) console.log(mergedNode.size(metricName))
             if (mergedNode.size(metricName) === child.size(metricName)) {
                 let name = node.name;
                 mergedNode = child;
