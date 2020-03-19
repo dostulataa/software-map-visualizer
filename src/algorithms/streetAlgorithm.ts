@@ -37,7 +37,8 @@ export default function createLayout(rootNode: CCNode, metricName: string, treem
  */
 function createBoxes(node: CCNode, orientation: StreetOrientation, metricName: string, depth: number, treemapDepth: number, treemapAlgorithm: TreemapAlgorithm): Box[] {
     const children: Box[] = [];
-    for (let child of node.children) {
+    const mergedNode = mergeDirectories(node, metricName);
+    for (let child of mergedNode.children) {
         if (child.size(metricName) === 0) { continue };
         if (child.isFile()) {
             children.push(new House(child));
@@ -65,6 +66,7 @@ function mergeDirectories(node: CCNode, metricName: string): CCNode {
     let mergedNode = node;
     for (const child of node.children) {
         if (child.isFolder()) {
+            if(mergedNode.name.includes("root")) console.log(mergedNode.size(metricName))
             if (mergedNode.size(metricName) === child.size(metricName)) {
                 let name = node.name;
                 mergedNode = child;
