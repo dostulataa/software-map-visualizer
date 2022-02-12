@@ -17,7 +17,7 @@
     "@types/d3-selection": "^1.4.1",
     "@types/d3-zoom": "^1.7.4",
     "@types/webpack-env": "^1.14.1",
-    "ajv": "^6.10.2",
+    "ajv": "^6.12.3",
     "clean-webpack-plugin": "^3.0.0",
     "d3-selection": "^1.4.1",
     "d3-zoom": "^1.8.3",
